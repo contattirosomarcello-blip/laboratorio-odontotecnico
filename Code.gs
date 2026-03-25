@@ -12,6 +12,12 @@ function doGet(e) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 function doPost(e) {
+  // VALIDATE SECRET TOKEN
+  var storedSecret = PropertiesService.getScriptProperties().getProperty('SECRET');
+  if (!storedSecret || e.parameter.secret !== storedSecret) {
+    return ContentService.createTextOutput('Unauthorized').setMimeType(ContentService.MimeType.TEXT);
+  }
+
   var lock = LockService.getScriptLock();
   try {
     lock.waitLock(10000);
@@ -219,4 +225,42 @@ function checkAvailability(dateStr) {
   }
   
   return responseJSON("success", "Slots retrieved", {bookedSlots: booked});
+}
+
+// BACKUP FUNCTION - Triggered weekly (Monday 2 AM)
+function backupSheets() {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var spreadsheetId = ss.getId();
+    var fileName = "Backup_" + new Date().toISOString().split('T')[0] + "_" + Utilities.getUuid().substring(0, 8);
+    
+    // Get or create backup folder
+    var folders = DriveApp.getFoldersByName("Backup_LaboratorioRoso");
+    var backupFolder = folders.hasNext() ? folders.next() : DriveApp.createFolder("Backup_LaboratorioRoso");
+    
+    // Copy entire spreadsheet
+    var copiedFile = DriveApp.getFileById(spreadsheetId).makeCopy(fileName, backupFolder);
+    
+    // Delete backups older than 12 weeks (keep last 12)
+    var files = backupFolder.getFilesByName(RegExp("^Backup_"));
+    var fileList = [];
+    while (files.hasNext()) {
+      fileList.push(files.next());
+    }
+    
+    if (fileList.length > 12) {
+      fileList.sort((a, b) => a.getLastUpdated() - b.getLastUpdated());
+      for (var i = 0; i < fileList.length - 12; i++) {
+        fileList[i].setTrashed(true);
+      }
+    }
+    
+    Logger.log("✅ Backup created: " + fileName);
+    return ContentService.createTextOutput(JSON.stringify({status: "success", message: "Backup created"}))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    Logger.log("❌ Backup error: " + err);
+    return ContentService.createTextOutput(JSON.stringify({status: "error", message: String(err)}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
 }

@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 import requests
 import os
 import json
@@ -10,15 +12,34 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
+
+# CORS Configuration - Whitelist only trusted origins
+allowed_origins = [
+    "http://localhost:3000",
+    "http://localhost:5000",
+    "https://hehetzu.github.io",
+    "https://marcello-bot.onrender.com",
+    os.environ.get("ALLOWED_ORIGIN", "https://hehetzu.github.io")
+]
+
+CORS(app, resources={r"/*": {
+    "origins": allowed_origins,
+    "methods": ["GET", "POST"],
+    "allow_headers": ["Content-Type"]
+}})
+
+# Rate Limiter
+limiter = Limiter(app=app, key_func=get_remote_address, default_limits=["200 per day", "50 per hour"])
 
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN", "").strip()
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
+TELEGRAM_SECRET = os.environ.get("TELEGRAM_SECRET", "").strip()
 BREVO_API_KEY = os.environ.get("BREVO_API_KEY", "").strip()
 BREVO_SENDER_EMAIL = os.environ.get("BREVO_SENDER_EMAIL", "contatti.rosomarcello@gmail.com").strip()
 BREVO_ADMIN_RECIPIENT = os.environ.get("BREVO_ADMIN_RECIPIENT", "contatti.rosomarcello@gmail.com").strip()
 
-GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwoeUyQyflLQEajTgYLfK47mzyBZuaemDWWKVpfhwPZTvS9iZ0ekt0KDtusjLkHYNm1/exec"
+GOOGLE_SCRIPT_URL = os.environ.get("GOOGLE_SCRIPT_URL", "").strip()
+GOOGLE_SCRIPT_SECRET = os.environ.get("GOOGLE_SCRIPT_SECRET", "").strip()
 
 if not TELEGRAM_TOKEN or not TELEGRAM_CHAT_ID:
     print("❌ ERRORE CRITICO: Token o Chat ID non trovati!")
@@ -48,13 +69,15 @@ def set_webhook():
         return jsonify({"error": str(e)}), 500
 
 @app.route("/webhook", methods=["POST", "OPTIONS"])
+@limiter.limit("30 per minute")
 def webhook():
     if request.method == "OPTIONS":
         return jsonify({"status": "ok"}), 200
 
+    # VALIDATE TELEGRAM SECRET
     data = request.json
-    if not data:
-        return {"status": "ignored", "message": "No JSON data"}, 200
+    if not data or data.get("secret") != TELEGRAM_SECRET:
+        return {"status": "unauthorized"}, 401
 
     if "callback_query" in data:
         print(f"🔴 CALLBACK_QUERY RICEVUTA! Dati completi: {data}")
@@ -97,7 +120,8 @@ def webhook():
                 "action": "update_status",
                 "date": date_app,
                 "time": time_app,
-                "status": new_status
+                "status": new_status,
+                "secret": GOOGLE_SCRIPT_SECRET
             }, timeout=10)
             
             if resp.status_code == 200:
@@ -295,7 +319,8 @@ def confirm_from_email():
             "action": "update_status",
             "date": date_app,
             "time": time_app,
-            "status": "Confermato"
+            "status": "Confermato",
+            "secret": GOOGLE_SCRIPT_SECRET
         }, timeout=10)
     except Exception as e:
         return f"<h1>Errore</h1><p>Impossibile aggiornare il calendario: {str(e)}</p>", 500
@@ -320,6 +345,7 @@ def confirm_from_email():
     """, 200
 
 @app.route("/send_email", methods=["POST"])
+@limiter.limit("5 per minute")
 def send_email():
     if not BREVO_API_KEY:
         return jsonify({"status": "error", "message": "Brevo API Key missing"}), 500
