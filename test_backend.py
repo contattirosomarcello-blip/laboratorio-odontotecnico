@@ -5,7 +5,8 @@ from dotenv import load_dotenv
 # Carica le configurazioni dal file .env
 load_dotenv()
 
-BASE_URL = "https://prova-marcello.onrender.com"
+# Default a localhost se non specificato diversamente nel file .env
+BASE_URL = os.environ.get("BACKEND_URL", "http://127.0.0.1:5000")
 TELEGRAM_SECRET = os.environ.get("TELEGRAM_SECRET", "")
 
 def test_contact_form():
