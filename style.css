@@ -1,6 +1,8 @@
 :root {
-  --primary: #0a6ebd;
-  --dark: #063969;
+  --primary: #003580; /* Booking Blue */
+  --secondary: #006ce4; /* Booking Light Blue */
+  --accent: #feba02; /* Booking Yellow */
+  --dark: #00224f;
   --bg: #f8fafc;
   --text: #1a1a1a;
   --muted: #545454;
@@ -231,6 +233,11 @@ section h2 {
   outline: none;
   border-color: var(--primary);
 }
+
+.contatti-info > .btn {
+  margin: 0.5rem;
+}
+
 .gallery-wrapper { position: relative; overflow: hidden; }
 
 .gallery {
@@ -303,7 +310,7 @@ section h2 {
 
 .whatsapp-button {
   position: fixed;
-  bottom: 85px;
+  bottom: 95px;
   right: 20px;
   width: 55px;
   height: 55px;
@@ -348,15 +355,20 @@ section h2 {
     visibility: visible;
   }
 
-  .hero-text h2 { font-size: 1.8rem; text-align: center; }
+  .hero-text h2 { font-size: 1.6rem; text-align: center; }
   .hero-text p { text-align: center; }
   
+  section h2 {
+    font-size: 1.5rem;
+  }
+
   .hero-text, .hero-img, .about-text, .about-img, .contatti-info, .contact-form, .map-info, .map-container {
     min-width: 100%;
   }
 
   .gallery img, .gallery video {
-    width: 85%;
+    /* Rimpicciolisce le foto nelle gallerie su mobile */
+    width: 240px;
   }
 
   footer { padding-bottom: 120px; }
@@ -396,6 +408,7 @@ footer {
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s, visibility 0.3s;
+  backdrop-filter: blur(5px);
 }
 
 .modal.is-open {
@@ -448,3 +461,315 @@ footer {
 .modal-nav:hover { background: rgba(255, 255, 255, 0.3); }
 .modal-nav.prev { left: 20px; }
 .modal-nav.next { right: 20px; }
+
+/* Stili per il Popup Preventivo */
+.popup-form-content {
+  background-color: #fff;
+  padding: 2.5rem 1.5rem 1.5rem;
+  border-radius: 15px;
+  max-width: 650px;
+  width: 90%;
+  position: relative;
+  max-height: 95vh;
+  overflow-y: auto;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+  animation: popupFadeIn 0.3s ease-out;
+}
+
+@keyframes popupFadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.popup-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  font-size: 2.5rem;
+  cursor: pointer;
+  color: #888;
+  line-height: 1;
+  z-index: 10;
+  transition: color 0.2s;
+}
+
+.popup-close-btn:hover {
+  color: var(--primary);
+}
+
+/* Stili compatti per il form nel popup */
+.popup-form-content .form-group {
+  margin-bottom: 0.8rem;
+}
+
+.popup-form-content label {
+  font-size: 0.9rem;
+  margin-bottom: 0.2rem;
+}
+
+.popup-form-content input,
+.popup-form-content textarea {
+  padding: 0.6rem;
+  font-size: 0.95rem;
+}
+
+.popup-form-content textarea {
+  height: 100px;
+}
+
+/* Layout a griglia per il form nel popup su schermi più grandi */
+@media (min-width: 600px) {
+  .popup-form-content .contact-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 1.5rem; /* Spazio tra le colonne */
+    align-items: start;
+  }
+
+  /* Campi che occupano l'intera larghezza */
+  .popup-form-content .form-group:has(input[name="telefono"]),
+  .popup-form-content .form-group:has(textarea[name="message"]),
+  .popup-form-content button[type="submit"] {
+    grid-column: 1 / -1;
+  }
+
+  /* Mantiene il margine inferiore per i gruppi del form */
+  .popup-form-content .form-group {
+    margin-bottom: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .popup-form-content {
+    padding: 1.5rem 1rem;
+    width: 95%;
+  }
+
+  .popup-close-btn {
+    top: 10px;
+    right: 10px;
+    font-size: 2rem;
+  }
+}
+
+/* Stili per il contenitore del calendario */
+.calendar-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto 3rem;
+  background: #fff;
+  padding: 20px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid #e5e7eb;
+  max-width: 450px;
+}
+
+/* Stili per il form di prenotazione appuntamento */
+.appointment-form {
+  max-width: 600px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.appointment-form .form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.appointment-form label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+}
+
+.appointment-form input,
+.appointment-form select,
+.appointment-form textarea {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border-color 0.3s;
+}
+
+.appointment-form input:focus,
+.appointment-form select:focus,
+.appointment-form textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(10, 110, 189, 0.1);
+}
+
+.appointment-form textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.appointment-form button {
+  padding: 0.75rem 1.5rem;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+  margin-top: 1rem;
+}
+
+.appointment-form button:hover {
+  background: var(--dark);
+}
+
+.appointment-form button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* Layout responsive per il form appuntamento */
+@media (min-width: 768px) {
+  .appointment-form {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .appointment-form .form-group:has(textarea),
+  .appointment-form button {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Stili personalizzati per Flatpickr */
+.flatpickr-calendar {
+  background: #fff !important;
+  border: none !important;
+  box-shadow: none !important;
+  font-family: 'Poppins', sans-serif;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.flatpickr-months .flatpickr-month {
+  background: transparent;
+  color: var(--text);
+  height: 50px;
+}
+
+.flatpickr-current-month {
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.flatpickr-months .flatpickr-prev-month,
+.flatpickr-months .flatpickr-next-month {
+  color: var(--primary);
+  fill: var(--primary);
+}
+
+.flatpickr-day {
+  border-radius: 4px !important;
+  border: 1px solid transparent;
+}
+
+.flatpickr-day:hover {
+  background: #f1f5f9 !important;
+  color: var(--primary) !important;
+}
+
+.flatpickr-day.selected {
+  background: var(--primary) !important;
+  border-color: var(--primary) !important;
+  color: #fff !important;
+  font-weight: bold;
+}
+
+.flatpickr-day.today {
+  border-color: var(--primary) !important;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.flatpickr-day.disabled {
+  color: #cbd5e1 !important;
+  text-decoration: line-through;
+}
+
+.flatpickr-calendar.inline {
+    width: 100% !important;
+}
+
+/* Stile Popup "Booking" */
+.popup-form-content {
+  border-top: 5px solid var(--primary);
+}
+
+.popup-form-content h3 {
+  color: var(--dark);
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+/* Stili per gli slot orari */
+.time-slots {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: var(--radius);
+}
+
+.time-slots h4 {
+  margin: 0 0 1rem 0;
+  color: var(--primary);
+  font-size: 1.1rem;
+}
+
+.slots-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 0.5rem;
+}
+
+.time-slot {
+  padding: 12px 5px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 1rem;
+  text-align: center;
+  font-weight: 500;
+}
+
+.time-slot:hover {
+  background: #fff;
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.time-slot.selected {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+.time-slot.disabled {
+  background: #eee;
+  color: #999;
+  cursor: not-allowed;
+}
+
+/* Stile per gli slot orari in attesa di conferma */
+.time-slot.pending {
+  background-color: var(--accent); /* Usa il colore giallo definito in :root */
+  color: var(--dark);
+  border-color: var(--accent);
+}

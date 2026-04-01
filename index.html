@@ -12,7 +12,19 @@
 
   <link rel="stylesheet" href="style.css">
 
+  <link rel="icon" href="foto/logo%20marcello.jpeg" type="image/jpeg">
+
   <link rel="preload" as="image" href="foto/deflex.jpeg">
+
+  <!-- EmailJS SDK -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+  <!-- Flatpickr CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+  <!-- Flatpickr JS -->
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/it.js"></script>
 </head>
 
 <body>
@@ -34,6 +46,7 @@
       <a href="#gallery">Galleria</a>
       <a href="#dove-siamo">Dove siamo</a>
       <a href="#contatti">Contatti</a>
+      <a href="#prenota">Prenota</a>
     </nav>
   </div>
 </header>
@@ -119,9 +132,25 @@
     <p style="text-align: center; color: var(--muted); margin-bottom: 1.5rem;">La soddisfazione del paziente è il nostro obiettivo. Guarda alcuni esempi dei nostri lavori.</p>
     <div class="gallery-wrapper" id="clients-gallery">
       <div class="gallery">
+        <img src="foto/foto-cliente-1.jpeg" alt="Cliente soddisfatto con protesi flessibile">
+        <img src="foto/foto-cliente-2.jpeg" alt="Cliente soddisfatto con protesi mobili">
+        <img src="foto/foto-cliente-3.jpeg" alt="Cliente soddisfatto con protesi fisse">
+        <img src="foto/foto-cliente-4.jpeg" alt="Cliente soddisfatto con riparazioni veloci">
+        <img src="foto/foto-cliente-5.jpeg" alt="Cliente soddisfatto con riparazioni veloci">
+        <img src="foto/foto-cliente-6.jpeg" alt="Cliente soddisfatto con riparazioni veloci">
+
+
       </div>
       <button class="carousel-btn prev" aria-label="Immagine precedente">‹</button>
       <button class="carousel-btn next" aria-label="Immagine successiva">›</button>
+    </div>
+  </section>
+
+  <section id="prenota" class="container animate-on-scroll">
+    <h2>Prenota un Appuntamento</h2>
+    <p style="text-align: center; color: var(--muted); margin-bottom: 1.5rem;">Seleziona una data dal calendario per vedere gli orari disponibili.</p>
+    <div class="calendar-wrapper">
+      <div id="app-date"></div>
     </div>
   </section>
 
@@ -147,11 +176,11 @@
       <h2>I nostri recapiti</h2>
       <div class="contatti-info animate-on-scroll" data-delay="0">
         <p>Siamo a tua disposizione per qualsiasi chiarimento o necessità. Contattaci direttamente o compila il modulo per richiedere un preventivo o maggiori informazioni.</p>
-        <p><strong>Email:</strong> <a href="mailto:sssss112awe21@gmail.com">sssss112awe21@gmail.com</a></p>
+        <p><strong>Email:</strong> <a href="mailto:contatti.rosomarcello@gmail.com">contatti.rosomarcello@gmail.com</a></p>
         <p><strong>Telefono:</strong> <a href="tel:3381731927">338 1731927</a></p>
         <a href="https://wa.me/393381731927" class="btn whatsapp-contact" target="_blank" rel="noopener noreferrer">Contattaci su WhatsApp</a>
       </div>
-      <form id="contact-form" action="https://formsubmit.co/sssss112awe21@gmail.com" method="POST" class="contact-form animate-on-scroll" data-delay="200">
+      <form id="contact-form" action="https://formsubmit.co/contatti.rosomarcello@gmail.com" method="POST" class="contact-form animate-on-scroll" data-delay="200">
         <input type="hidden" name="_subject" value="Nuova richiesta dal sito web">
         <input type="hidden" name="_captcha" value="false">
         <input type="text" name="_honey" style="display:none">
@@ -171,6 +200,7 @@
       </form>
     </div>
   </section>
+
 </main>
 
 <footer>
@@ -192,6 +222,51 @@
     <button class="modal-nav prev" aria-label="Precedente">‹</button>
     <img id="modal-img" src="" alt="Immagine ingrandita">
     <button class="modal-nav next" aria-label="Successiva">›</button>
+  </div>
+</div>
+
+<!-- Modale per la selezione dell'Orario -->
+<div id="time-modal" class="modal">
+  <div class="popup-form-content">
+    <button class="popup-close-btn" onclick="closeModal('time-modal')">&times;</button>
+    <h3>Seleziona l'orario per il <span id="selected-date-display"></span></h3>
+    <div id="slots-container" class="slots-container"></div>
+  </div>
+</div>
+
+<!-- Modale per l'inserimento Dati -->
+<div id="details-modal" class="modal">
+  <div class="popup-form-content">
+    <button class="popup-close-btn" onclick="closeModal('details-modal')">&times;</button>
+    <h3>Completa la prenotazione</h3>
+    <p>Appuntamento il <span id="final-date-display"></span> alle <span id="final-time-display"></span></p>
+    <form id="appointment-form" action="https://formsubmit.co/contatti.rosomarcello@gmail.com" method="POST" class="appointment-form">
+      <input type="hidden" name="_subject" value="Nuova prenotazione appuntamento">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="text" name="_honey" style="display:none">
+      
+      <!-- Campi nascosti per data e ora -->
+      <input type="hidden" name="date" id="hidden-date">
+      <input type="hidden" name="time" id="hidden-time">
+      
+      <div class="form-group">
+        <label for="app-nome">Nome e Cognome</label>
+        <input type="text" id="app-nome" name="name" required placeholder="Inserisci il tuo nome">
+      </div>
+      <div class="form-group">
+        <label for="app-telefono">Telefono</label>
+        <input type="tel" id="app-telefono" name="phone" required placeholder="Il tuo numero">
+      </div>
+      <div class="form-group">
+        <label for="app-email">Email</label>
+        <input type="email" id="app-email" name="email" required placeholder="La tua email">
+      </div>
+      <div class="form-group">
+        <label for="app-messaggio">Richiesta Speciale</label>
+        <textarea id="app-messaggio" name="message" placeholder="Note opzionali..."></textarea>
+      </div>
+      <button type="submit" class="btn">Conferma Prenotazione</button>
+    </form>
   </div>
 </div>
 
