@@ -1,0 +1,775 @@
+:root {
+  --primary: #003580; /* Booking Blue */
+  --secondary: #006ce4; /* Booking Light Blue */
+  --accent: #feba02; /* Booking Yellow */
+  --dark: #00224f;
+  --bg: #f8fafc;
+  --text: #1a1a1a;
+  --muted: #545454;
+  --radius: 10px;
+  --shadow: 0 4px 12px rgba(0,0,0,0.05);
+  --maxw: 1200px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+a { text-decoration: none; color: inherit; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.container {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 2rem 1.2rem;
+  scroll-margin-top: 80px;
+  width: 100%;
+}
+
+header {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+}
+
+header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1.2rem;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  max-width: 80%;
+}
+
+.logo {
+  height: 45px;
+  width: auto;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+header h1 {
+  font-size: 1.2rem;
+  color: var(--primary);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+nav {
+  display: flex;
+  gap: 1.5rem;
+  font-weight: 500;
+}
+
+nav a {
+  color: var(--dark);
+  transition: 0.2s;
+}
+
+nav a:hover { color: var(--primary); }
+
+.hamburger-menu {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 1.8rem;
+  height: 1.5rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 2500;
+}
+
+.hamburger-menu span {
+  width: 100%;
+  height: 0.2rem;
+  background: var(--dark);
+  border-radius: 10px;
+  transition: all 0.3s;
+}
+
+.hero {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.hero-text {
+  flex: 1.2;
+  min-width: 300px;
+}
+
+.hero-text h2 {
+  font-size: 2.2rem;
+  color: var(--dark);
+  margin-bottom: 0.7rem;
+  text-align: left;
+}
+
+.hero-text p {
+  max-width: 500px;
+  color: var(--muted);
+}
+
+.hero-img {
+  flex: 0.8;
+  min-width: 300px;
+  max-width: 400px;
+}
+
+.hero-img img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+section h2 {
+  font-size: 1.8rem;
+  color: var(--dark);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+.card {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: 0.3s;
+}
+
+.card:hover { transform: translateY(-5px); }
+
+.card h3 {
+  margin-bottom: 0.5rem;
+  color: var(--primary);
+  font-size: 1.1rem;
+}
+
+.about-wrapper, .contatti-wrapper, .map-wrapper {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.about-text, .about-img, .contatti-info, .contact-form, .map-info, .map-container {
+  flex: 1;
+  min-width: 300px;
+}
+
+.about-img {
+  max-width: 300px;
+}
+
+.about-img img {
+  width: 100%;
+  border-radius: var(--radius);
+}
+
+.contact-form .form-group {
+  margin-bottom: 1.2rem;
+}
+
+.contact-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.contact-form input, .contact-form textarea {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.contact-form input:focus, .contact-form textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.contatti-info > .btn {
+  margin: 0.5rem;
+}
+
+.gallery-wrapper { position: relative; overflow: hidden; }
+
+.gallery {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 1rem 0;
+  scrollbar-width: none;
+}
+
+.gallery::-webkit-scrollbar { display: none; }
+
+.gallery img, .gallery video {
+  flex-shrink: 0;
+  width: 280px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: var(--radius);
+  scroll-snap-align: center;
+}
+
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  font-size: 2rem;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  transition: 0.3s;
+}
+
+.carousel-btn:hover { background: var(--primary); color: #fff; }
+.carousel-btn.prev { left: 10px; }
+.carousel-btn.next { right: 10px; }
+
+.btn {
+  display: inline-block;
+  padding: 0.8rem 1.6rem;
+  background: var(--primary);
+  color: #fff;
+  border-radius: var(--radius);
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn:hover { background: var(--dark); }
+
+.fixed-quote-btn {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1100;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  transition: opacity 0.3s, visibility 0.3s;
+}
+
+.whatsapp-button {
+  position: fixed;
+  bottom: 95px;
+  right: 20px;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1100;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  transition: opacity 0.3s, visibility 0.3s;
+}
+
+.fixed-quote-btn.is-hidden,
+.whatsapp-button.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  header h1 { font-size: 1rem; }
+  
+  .hamburger-menu { display: flex; }
+
+  nav {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 100%;
+    background: #fff;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transform: translateX(100%);
+    transition: 0.4s;
+    visibility: hidden;
+  }
+
+  nav.is-open {
+    transform: translateX(0);
+    visibility: visible;
+  }
+
+  .hero-text h2 { font-size: 1.6rem; text-align: center; }
+  .hero-text p { text-align: center; }
+  
+  section h2 {
+    font-size: 1.5rem;
+  }
+
+  .hero-text, .hero-img, .about-text, .about-img, .contatti-info, .contact-form, .map-info, .map-container {
+    min-width: 100%;
+  }
+
+  .gallery img, .gallery video {
+    /* Rimpicciolisce le foto nelle gallerie su mobile */
+    width: 240px;
+  }
+
+  footer { padding-bottom: 120px; }
+}
+
+.map-container {
+  height: 300px;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.map-container iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+footer {
+  background: var(--dark);
+  color: #fff;
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+/* Stili per la Modale (Lightbox) */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 3000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+  backdrop-filter: blur(5px);
+}
+
+.modal.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-inner {
+  position: relative;
+  max-width: 90%;
+  max-height: 90%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-inner img {
+  max-width: 100%;
+  max-height: 85vh;
+  border-radius: var(--radius);
+  box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+}
+
+.modal-close {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  cursor: pointer;
+  z-index: 3001;
+}
+
+.modal-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+.modal-nav:hover { background: rgba(255, 255, 255, 0.3); }
+.modal-nav.prev { left: 20px; }
+.modal-nav.next { right: 20px; }
+
+/* Stili per il Popup Preventivo */
+.popup-form-content {
+  background-color: #fff;
+  padding: 2.5rem 1.5rem 1.5rem;
+  border-radius: 15px;
+  max-width: 650px;
+  width: 90%;
+  position: relative;
+  max-height: 95vh;
+  overflow-y: auto;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+  animation: popupFadeIn 0.3s ease-out;
+}
+
+@keyframes popupFadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.popup-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  font-size: 2.5rem;
+  cursor: pointer;
+  color: #888;
+  line-height: 1;
+  z-index: 10;
+  transition: color 0.2s;
+}
+
+.popup-close-btn:hover {
+  color: var(--primary);
+}
+
+/* Stili compatti per il form nel popup */
+.popup-form-content .form-group {
+  margin-bottom: 0.8rem;
+}
+
+.popup-form-content label {
+  font-size: 0.9rem;
+  margin-bottom: 0.2rem;
+}
+
+.popup-form-content input,
+.popup-form-content textarea {
+  padding: 0.6rem;
+  font-size: 0.95rem;
+}
+
+.popup-form-content textarea {
+  height: 100px;
+}
+
+/* Layout a griglia per il form nel popup su schermi più grandi */
+@media (min-width: 600px) {
+  .popup-form-content .contact-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 1.5rem; /* Spazio tra le colonne */
+    align-items: start;
+  }
+
+  /* Campi che occupano l'intera larghezza */
+  .popup-form-content .form-group:has(input[name="telefono"]),
+  .popup-form-content .form-group:has(textarea[name="message"]),
+  .popup-form-content button[type="submit"] {
+    grid-column: 1 / -1;
+  }
+
+  /* Mantiene il margine inferiore per i gruppi del form */
+  .popup-form-content .form-group {
+    margin-bottom: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .popup-form-content {
+    padding: 1.5rem 1rem;
+    width: 95%;
+  }
+
+  .popup-close-btn {
+    top: 10px;
+    right: 10px;
+    font-size: 2rem;
+  }
+}
+
+/* Stili per il contenitore del calendario */
+.calendar-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto 3rem;
+  background: #fff;
+  padding: 20px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid #e5e7eb;
+  max-width: 450px;
+}
+
+/* Stili per il form di prenotazione appuntamento */
+.appointment-form {
+  max-width: 600px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.appointment-form .form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.appointment-form label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+}
+
+.appointment-form input,
+.appointment-form select,
+.appointment-form textarea {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border-color 0.3s;
+}
+
+.appointment-form input:focus,
+.appointment-form select:focus,
+.appointment-form textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(10, 110, 189, 0.1);
+}
+
+.appointment-form textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.appointment-form button {
+  padding: 0.75rem 1.5rem;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+  margin-top: 1rem;
+}
+
+.appointment-form button:hover {
+  background: var(--dark);
+}
+
+.appointment-form button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* Layout responsive per il form appuntamento */
+@media (min-width: 768px) {
+  .appointment-form {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .appointment-form .form-group:has(textarea),
+  .appointment-form button {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Stili personalizzati per Flatpickr */
+.flatpickr-calendar {
+  background: #fff !important;
+  border: none !important;
+  box-shadow: none !important;
+  font-family: 'Poppins', sans-serif;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.flatpickr-months .flatpickr-month {
+  background: transparent;
+  color: var(--text);
+  height: 50px;
+}
+
+.flatpickr-current-month {
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.flatpickr-months .flatpickr-prev-month,
+.flatpickr-months .flatpickr-next-month {
+  color: var(--primary);
+  fill: var(--primary);
+}
+
+.flatpickr-day {
+  border-radius: 4px !important;
+  border: 1px solid transparent;
+}
+
+.flatpickr-day:hover {
+  background: #f1f5f9 !important;
+  color: var(--primary) !important;
+}
+
+.flatpickr-day.selected {
+  background: var(--primary) !important;
+  border-color: var(--primary) !important;
+  color: #fff !important;
+  font-weight: bold;
+}
+
+.flatpickr-day.today {
+  border-color: var(--primary) !important;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.flatpickr-day.disabled {
+  color: #cbd5e1 !important;
+  text-decoration: line-through;
+}
+
+.flatpickr-calendar.inline {
+    width: 100% !important;
+}
+
+/* Stile Popup "Booking" */
+.popup-form-content {
+  border-top: 5px solid var(--primary);
+}
+
+.popup-form-content h3 {
+  color: var(--dark);
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+/* Stili per gli slot orari */
+.time-slots {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: var(--radius);
+}
+
+.time-slots h4 {
+  margin: 0 0 1rem 0;
+  color: var(--primary);
+  font-size: 1.1rem;
+}
+
+.slots-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 0.5rem;
+}
+
+.time-slot {
+  padding: 12px 5px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 1rem;
+  text-align: center;
+  font-weight: 500;
+}
+
+.time-slot:hover {
+  background: #fff;
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.time-slot.selected {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+.time-slot.disabled {
+  background: #eee;
+  color: #999;
+  cursor: not-allowed;
+}
+
+/* Stile per gli slot orari in attesa di conferma */
+.time-slot.pending {
+  background-color: var(--accent); /* Usa il colore giallo definito in :root */
+  color: var(--dark);
+  border-color: var(--accent);
+}

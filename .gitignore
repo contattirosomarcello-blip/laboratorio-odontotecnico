@@ -1,0 +1,11 @@
+# Ambiente virtuale
+venv/
+.venv/
+env/
+
+# File di configurazione sensibili
+.env
+
+# Python cache
+__pycache__/
+*.py[cod]

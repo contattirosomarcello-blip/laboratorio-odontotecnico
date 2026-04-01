@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Laboratorio odontotecnico a Torino specializzato in protesi flessibili Deflex, protesi mobili e fisse. Qualità, precisione e materiali certificati per studi dentistici.">
+  <title>Laboratorio Odontotecnico Roso Marcello</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+
+  <link rel="icon" href="foto/logo%20marcello.jpeg" type="image/jpeg">
+
+  <link rel="preload" as="image" href="foto/deflex.jpeg">
+
+  <!-- EmailJS SDK -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+  <!-- Flatpickr CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+  <!-- Flatpickr JS -->
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/it.js"></script>
+</head>
+
+<body>
+
+<header>
+  <div class="container">
+    <a href="#" class="header-brand">
+      <img src="foto/logo%20marcello.jpeg" alt="Logo Laboratorio Roso Marcello" class="logo">
+      <h1>Laboratorio Odontotecnico Roso Marcello</h1>
+    </a>
+    <button class="hamburger-menu" aria-label="Menu di navigazione" aria-controls="main-nav" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <nav id="main-nav">
+      <a href="#servizi">Servizi</a>
+      <a href="#chi-siamo">Chi Siamo</a>
+      <a href="#gallery">Galleria</a>
+      <a href="#dove-siamo">Dove siamo</a>
+      <a href="#contatti">Contatti</a>
+      <a href="#prenota">Prenota</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <section class="container hero animate-on-scroll">
+    <div class="hero-text">
+      <h2>Protesi dentarie di precisione</h2>
+      <p>
+        Specializzato in <strong>protesi flessibili in Deflex</strong>, protesi mobili e protesi fisse estetiche.  
+        Lavorazioni accurate, materiali certificati e un approccio professionale pensato per studi dentistici.
+      </p>
+      
+    </div>
+
+    <div class="hero-img">
+      <img src="foto/deflex.jpeg" alt="Esempio di protesi flessibile in Deflex" fetchpriority="high">
+    </div>
+  </section>
+
+  <section id="servizi" class="container animate-on-scroll">
+    <h2>Servizi professionali</h2>
+
+    <div class="cards">
+      <div class="card animate-on-scroll" data-delay="0">
+        <h3>Protesi Fisse</h3>
+        <p>Corone e ponti estetici realizzati con precisione e materiali di alta qualità.</p>
+      </div>
+
+      <div class="card animate-on-scroll" data-delay="100">
+        <h3>Protesi Mobili</h3>
+        <p>Soluzioni confortevoli e personalizzate per ogni paziente.</p>
+      </div>
+
+      <div class="card animate-on-scroll" data-delay="200">
+        <h3>Protesi Flessibili in Deflex</h3>
+        <p>
+          Specializzazione nella realizzazione di protesi flessibili: resistenti, elastiche e altamente confortevoli.
+        </p>
+      </div>
+
+      <div class="card animate-on-scroll" data-delay="300">
+        <h3>Riparazioni Veloci</h3>
+        <p>Servizio rapido per riparazioni urgenti di dispositivi protesici.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="chi-siamo" class="container animate-on-scroll">
+    <h2>Chi siamo</h2>
+    <div class="about-wrapper">
+      <div class="about-text animate-on-scroll">
+        <p>
+          Il Laboratorio Odontotecnico Roso Marcello nasce dalla passione per la precisione e la cura del dettaglio.
+          Offriamo supporto professionale agli studi dentistici, integrando tecniche moderne e un’elevata specializzazione
+          nelle <strong>protesi flessibili in Deflex</strong>, garantendo qualità, funzionalità ed estetica.
+        </p>
+      </div>
+      <div class="about-img">
+        <img src="https://lh3.googleusercontent.com/p/AF1QipNSCnghZTPw3Vxg7UfDlb6VIZw3PlW1uTVrVAPS=s680-w680-h510-rw" alt="Esterno del laboratorio odontotecnico Roso Marcello" class="animate-on-scroll" loading="lazy">
+      </div>
+    </div>
+  </section>
+
+  <section id="gallery" class="container animate-on-scroll">
+    <h2>Galleria lavori</h2>
+    <div class="gallery-wrapper" id="main-gallery">
+      <div class="gallery">
+        <video src="foto/video.mp4" autoplay loop muted playsinline title="Video dimostrativo di una protesi flessibile"></video>
+        <img src="foto/foto%20protesi.jpeg" alt="Protesi dentaria flessibile Deflex" loading="lazy">
+        <img src="foto/foto%20galleria%202.jpeg" alt="Lavorazione di una protesi in laboratorio" loading="lazy">
+        <img src="foto/foto%20galleria%203.jpeg" alt="Dettaglio di una protesi fissa" loading="lazy">
+        <img src="foto/foto%20galleria%204.jpeg" alt="Strumenti di precisione del laboratorio odontotecnico" loading="lazy">
+      </div>
+      <button class="carousel-btn prev" aria-label="Immagine precedente">‹</button>
+      <button class="carousel-btn next" aria-label="Immagine successiva">›</button>
+    </div>
+  </section>
+
+  <section id="clienti" class="container animate-on-scroll">
+    <h2>I nostri risultati sui pazienti</h2>
+    <p style="text-align: center; color: var(--muted); margin-bottom: 1.5rem;">La soddisfazione del paziente è il nostro obiettivo. Guarda alcuni esempi dei nostri lavori.</p>
+    <div class="gallery-wrapper" id="clients-gallery">
+      <div class="gallery">
+        <img src="foto/foto-cliente-1.jpeg" alt="Cliente soddisfatto con protesi flessibile">
+        <img src="foto/foto-cliente-2.jpeg" alt="Cliente soddisfatto con protesi mobili">
+        <img src="foto/foto-cliente-3.jpeg" alt="Cliente soddisfatto con protesi fisse">
+        <img src="foto/foto-cliente-4.jpeg" alt="Cliente soddisfatto con riparazioni veloci">
+        <img src="foto/foto-cliente-5.jpeg" alt="Cliente soddisfatto con riparazioni veloci">
+        <img src="foto/foto-cliente-6.jpeg" alt="Cliente soddisfatto con riparazioni veloci">
+
+
+      </div>
+      <button class="carousel-btn prev" aria-label="Immagine precedente">‹</button>
+      <button class="carousel-btn next" aria-label="Immagine successiva">›</button>
+    </div>
+  </section>
+
+  <section id="prenota" class="container animate-on-scroll">
+    <h2>Prenota un Appuntamento</h2>
+    <p style="text-align: center; color: var(--muted); margin-bottom: 1.5rem;">Seleziona una data dal calendario per vedere gli orari disponibili.</p>
+    <div class="calendar-wrapper">
+      <div id="app-date"></div>
+    </div>
+  </section>
+
+  <section id="dove-siamo" class="container animate-on-scroll">
+    <h2>Dove Siamo</h2>
+    <div class="map-wrapper">
+      <div class="map-container">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2816.892795255835!2d7.712745684499114!3d45.09325425660882!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4788727285b51b2f%3A0xcdd4323b449b080c!2sLABORATORIO%20ODONTOTECNICO%20ROSO%20MARCELLO!5e0!3m2!1sit!2sit!4v1717081831872!5m2!1sit!2sit" title="Mappa del Laboratorio Odontotecnico Roso Marcello" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+      <div class="map-info">
+        <p>
+          <strong>Indirizzo:</strong><br>
+          Corso Regio Parco, 168<br>
+           10154 Torino (TO)
+        </p>
+        <a href="https://www.google.com/maps/dir/?api=1&destination=Laboratorio+Odontotecnico+Roso+Marcello,+Corso+Regio+Parco,+168,+10154+Torino+TO" target="_blank" rel="noopener noreferrer" class="btn">Ottieni Indicazioni</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="contatti" class="container animate-on-scroll">
+    <div class="contatti-wrapper">
+      <h2>I nostri recapiti</h2>
+      <div class="contatti-info animate-on-scroll" data-delay="0">
+        <p>Siamo a tua disposizione per qualsiasi chiarimento o necessità. Contattaci direttamente o compila il modulo per richiedere un preventivo o maggiori informazioni.</p>
+        <p><strong>Email:</strong> <a href="mailto:contatti.rosomarcello@gmail.com">contatti.rosomarcello@gmail.com</a></p>
+        <p><strong>Telefono:</strong> <a href="tel:3381731927">338 1731927</a></p>
+        <a href="https://wa.me/393381731927" class="btn whatsapp-contact" target="_blank" rel="noopener noreferrer">Contattaci su WhatsApp</a>
+      </div>
+      <form id="contact-form" action="https://formsubmit.co/contatti.rosomarcello@gmail.com" method="POST" class="contact-form animate-on-scroll" data-delay="200">
+        <input type="hidden" name="_subject" value="Nuova richiesta dal sito web">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="text" name="_honey" style="display:none">
+        <div class="form-group">
+          <label for="name">Il tuo Nome</label>
+          <input type="text" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+          <label for="email">La tua Email</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="message">Messaggio</label>
+          <textarea id="message" name="message" rows="5" placeholder="Scrivi qui la tua richiesta..." required></textarea>
+        </div>
+        <button type="submit" class="btn">Invia Messaggio</button>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="social-links">
+    <span>Seguici su:</span>
+    <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" width="24" height="24" fill="currentColor"><path d="M80 299.3V512H196V299.3h86.5l18-97.8H196V166.9c0-51.7 20.3-71.5 72.7-71.5c16.3 0 29.4 .4 37 1.2V7.9C291.4 4 256.4 0 236.2 0C129.3 0 80 50.5 80 159.4v42.1H14v97.8H80z"/></svg>
+    </a>
+    <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="24" height="24" fill="currentColor"><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.9 0-184.9zm-49.1 299.2c-20.5 20.5-47.9 23-106.7 23-59.9 0-87.3-2.5-106.7-23-19.4-19.4-21.9-47.3-21.9-106.7 0-60.4 2.5-87.3 21.9-106.7 19.4-19.4 47.3-21.9 106.7-21.9 59.9 0 87.3 2.5 106.7 21.9 19.4 19.4 21.9 47.3 21.9 106.7 0 59.9-2.5 87.3-21.9 106.7z"/></svg>
+    </a>
+  </div>
+  <p>© <span id="year"></span> Laboratorio Odontotecnico Roso Marcello. Tutti i diritti riservati.</p>
+</footer>
+
+<div class="modal" id="image-modal">
+  <div class="modal-inner">
+    <button class="modal-close" aria-label="Chiudi">✕</button>
+    <button class="modal-nav prev" aria-label="Precedente">‹</button>
+    <img id="modal-img" src="" alt="Immagine ingrandita">
+    <button class="modal-nav next" aria-label="Successiva">›</button>
+  </div>
+</div>
+
+<!-- Modale per la selezione dell'Orario -->
+<div id="time-modal" class="modal">
+  <div class="popup-form-content">
+    <button class="popup-close-btn" onclick="closeModal('time-modal')">&times;</button>
+    <h3>Seleziona l'orario per il <span id="selected-date-display"></span></h3>
+    <div id="slots-container" class="slots-container"></div>
+  </div>
+</div>
+
+<!-- Modale per l'inserimento Dati -->
+<div id="details-modal" class="modal">
+  <div class="popup-form-content">
+    <button class="popup-close-btn" onclick="closeModal('details-modal')">&times;</button>
+    <h3>Completa la prenotazione</h3>
+    <p>Appuntamento il <span id="final-date-display"></span> alle <span id="final-time-display"></span></p>
+    <form id="appointment-form" action="https://formsubmit.co/contatti.rosomarcello@gmail.com" method="POST" class="appointment-form">
+      <input type="hidden" name="_subject" value="Nuova prenotazione appuntamento">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="text" name="_honey" style="display:none">
+      
+      <!-- Campi nascosti per data e ora -->
+      <input type="hidden" name="date" id="hidden-date">
+      <input type="hidden" name="time" id="hidden-time">
+      
+      <div class="form-group">
+        <label for="app-nome">Nome e Cognome</label>
+        <input type="text" id="app-nome" name="name" required placeholder="Inserisci il tuo nome">
+      </div>
+      <div class="form-group">
+        <label for="app-telefono">Telefono</label>
+        <input type="tel" id="app-telefono" name="phone" required placeholder="Il tuo numero">
+      </div>
+      <div class="form-group">
+        <label for="app-email">Email</label>
+        <input type="email" id="app-email" name="email" required placeholder="La tua email">
+      </div>
+      <div class="form-group">
+        <label for="app-messaggio">Richiesta Speciale</label>
+        <textarea id="app-messaggio" name="message" placeholder="Note opzionali..."></textarea>
+      </div>
+      <button type="submit" class="btn">Conferma Prenotazione</button>
+    </form>
+  </div>
+</div>
+
+<a href="#contatti" class="fixed-quote-btn btn">Ottieni un Preventivo</a>
+
+<a href="https://wa.me/393381731927" class="whatsapp-button" target="_blank" rel="noopener noreferrer">
+  <img src="foto/icons8-whatsapp.gif" alt="WhatsApp" width="55" height="55">
+  <span class="sr-only">Contattaci su WhatsApp</span>
+</a>
+
+<script src="script.js"></script>
+
+</body>
+</html>
