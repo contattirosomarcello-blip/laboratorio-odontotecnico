@@ -11,6 +11,10 @@ app.use(express.json());
 // L'URL della tua Web App di Google Apps Script (impostato nelle Environment Variables di Render)
 const GAS_URL = process.env.GAS_URL;
 
+if (!GAS_URL) {
+    console.error("ERRORE CRITICO: La variabile d'ambiente GAS_URL non è impostata. Il server non potrà inoltrare le richieste.");
+}
+
 app.post('/api/prenotazioni', async (req, res) => {
     try {
         console.log("Inoltro richiesta a Google Sheets...");

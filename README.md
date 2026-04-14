@@ -1,5 +1,7 @@
 # Laboratorio Odontotecnico Roso Marcello - Backend Bridge
 
+Repository: [https://github.com/contattirosomarcello-blip/laboratorio-odontotecnico](https://github.com/contattirosomarcello-blip/laboratorio-odontotecnico)
+
 Questo repository contiene il sistema di gestione per le prenotazioni e i preventivi del Laboratorio Roso Marcello. Utilizza un'architettura bridge tra il sito web, Google Sheets e Telegram.
 
 ## Funzionamento
@@ -12,6 +14,9 @@ Questo repository contiene il sistema di gestione per le prenotazioni e i preven
 ### Variabili d'Ambiente (da impostare su Render)
 - `GAS_URL`: L'URL pubblico della Web App di Google Apps Script.
 - `ADMIN_TOKEN`: Token di sicurezza per le operazioni amministrative.
+
+### Configurazione Webhook Telegram
+Dopo il deploy su Render, assicurati di aggiornare il Webhook di Telegram chiamando la funzione `setTelegramWebhook` nel file `codice.gs` passando l'URL fornito da Render seguito da `/api/telegram-webhook`.
 
 ### Installazione Locale
 Se desideri testare il bridge in locale:
