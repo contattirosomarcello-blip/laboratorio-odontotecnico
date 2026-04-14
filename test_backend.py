@@ -12,8 +12,8 @@ if not ADMIN_TOKEN:
 
 print(f"DEBUG: Utilizzando token con lunghezza {len(ADMIN_TOKEN)} caratteri")
 
-# URL della Web App pubblicata su Google Apps Script
-URL = "https://laboratorio-roso-backend.onrender.com/api/prenotazioni"
+# URL del backend su Render
+URL = "https://laboratorio-odontotecnico.onrender.com/api/prenotazioni"
 
 def send_post(data, label):
     print(f"\n>>> [POST] Invio {label}...")

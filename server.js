@@ -17,25 +17,44 @@ if (!GAS_URL) {
 
 app.post('/api/prenotazioni', async (req, res) => {
     try {
-        console.log("Inoltro richiesta a Google Sheets...");
+        if (!GAS_URL) throw new Error("GAS_URL non configurato nelle variabili d'ambiente.");
+
+        console.log(`[${new Date().toISOString()}] Inoltro richiesta per: ${req.body.name || 'N/A'}`);
+        
         const response = await axios.post(GAS_URL, new URLSearchParams(req.body).toString(), {
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            timeout: 15000 // Timeout di 15 secondi per evitare attese infinite
         });
+
+        console.log("Risposta ricevuta da Google Apps Script:", response.data);
         res.json(response.data);
     } catch (error) {
-        console.error("Errore proxy:", error.message);
-        res.status(500).json({ status: 'error', message: 'Errore di comunicazione con il database.' });
+        const errorMsg = error.response ? `GAS Error: ${error.response.status}` : error.message;
+        console.error(`[${new Date().toISOString()}] Errore proxy:`, errorMsg);
+        res.status(500).json({ status: 'error', message: 'Errore di comunicazione con il database.', detail: errorMsg });
     }
 });
 
 app.post('/api/telegram-webhook', async (req, res) => {
     try {
-        console.log("Ricevuto callback da Telegram, inoltro a Google...");
-        await axios.post(GAS_URL, req.body);
-        res.status(200).send('OK');
+        if (!GAS_URL) throw new Error("GAS_URL non configurato nelle variabili d'ambiente.");
+
+        console.log(`[${new Date().toISOString()}] Telegram Webhook ricevuto:`, JSON.stringify(req.body).substring(0, 100) + "...");
+        
+        // Inoltro critico a Google Apps Script
+        const response = await axios.post(GAS_URL, req.body, {
+            headers: { 'Content-Type': 'application/json' },
+            timeout: 15000
+        });
+
+        console.log("Risposta da Google Apps Script:", JSON.stringify(response.data));
+        
+        // Rispondiamo sempre 200 OK a Telegram per evitare che riprovi all'infinito
+        res.status(200).send('OK'); 
     } catch (error) {
-        console.error("Errore Telegram bridge:", error.message);
-        res.status(500).send('Error');
+        const errorDetail = error.response ? `Status: ${error.response.status} - Data: ${JSON.stringify(error.response.data)}` : error.message;
+        console.error(`[${new Date().toISOString()}] Errore nel bridge Telegram:`, errorDetail);
+        res.status(200).send('OK'); 
     }
 });
 

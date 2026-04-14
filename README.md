@@ -10,13 +10,14 @@ Questo repository contiene il sistema di gestione per le prenotazioni e i preven
 3. **Database (Google Sheets)**: Google Apps Script riceve i dati filtrati dal bridge e li salva sui fogli di calcolo.
 4. **Notifiche (Telegram)**: Il sistema invia notifiche in tempo reale per accettare o rifiutare gli appuntamenti.
 
-## Configurazione
-### Variabili d'Ambiente (da impostare su Render)
-- `GAS_URL`: L'URL pubblico della Web App di Google Apps Script.
-- `ADMIN_TOKEN`: Token di sicurezza per le operazioni amministrative.
+## 🛠 Setup Rapido
 
-### Configurazione Webhook Telegram
-Dopo il deploy su Render, assicurati di aggiornare il Webhook di Telegram chiamando la funzione `setTelegramWebhook` nel file `codice.gs` passando l'URL fornito da Render seguito da `/api/telegram-webhook`.
+1. **Google**: Distribuisci `codice.gs` come Web App (Accesso: Chiunque).
+2. **GitHub**: Carica i file escludendo i segreti tramite `.gitignore`.
+3. **Render**: Crea un Web Service, collega GitHub e imposta `GAS_URL` e `ADMIN_TOKEN` nell'Environment.
+4. **Telegram**: Configura il Webhook puntando all'endpoint di Render.
+
+Per i dettagli tecnici sui parametri, consulta il file CONFIGURAZIONE_FINALE.md.
 
 ### Installazione Locale
 Se desideri testare il bridge in locale:

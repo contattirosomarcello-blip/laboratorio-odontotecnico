@@ -170,8 +170,8 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.textContent = "Invio in corso...";
             submitBtn.disabled = true;
 
-            // Sostituisci con l'URL reale fornito da Render dopo il deployment
-            const scriptURL = 'https://laboratorio-roso-backend.onrender.com/api/prenotazioni';
+            // URL del tuo backend su Render
+            const scriptURL = 'https://laboratorio-odontotecnico.onrender.com/api/prenotazioni';
             
             fetch(scriptURL, { method: 'POST', body: cleanData })
             .then(res => {

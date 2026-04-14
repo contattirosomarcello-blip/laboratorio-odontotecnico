@@ -100,7 +100,10 @@ function doPost(e) {
     if (e.postData && e.postData.contents) {
       try {
         const contents = JSON.parse(e.postData.contents);
-        if (contents.callback_query) {
+        
+        // Gestione Callback Query (Pulsanti Telegram)
+        if (contents && contents.callback_query) {
+          console.log("Rilevata Callback Query da Telegram:", contents.callback_query.data);
           isTelegram = true;
           callbackQueryId = contents.callback_query.id;
           const data = String(contents.callback_query.data || ""); // Formato inviato: accept_UUID o reject_UUID
@@ -152,9 +155,12 @@ function doPost(e) {
         [SHEET_NAMES.APPUNTAMENTO, SHEET_NAMES.PREVENTIVO].forEach(name => {
           const sheet = ss.getSheetByName(name);
           const rows = sheet.getDataRange().getValues();
-          rows.shift();
+          if (rows.length <= 1) return;
+          
+          rows.shift(); // Rimuovi intestazioni
 
           rows.forEach(row => {
+            if (!row[0]) return; // Salta righe vuote
             allData.push({
               id: row[0], date: row[1], name: row[2], phone: row[3],
               email: row[4], reason: row[5], notes: row[6], status: row[7],
@@ -423,10 +429,11 @@ function doGet(e) {
 /**
  * 1. Seleziona 'inizializzazioneUnaTantum' nel menu in alto.
  * 2. Clicca su 'Esegui'.
+ * NOTA: Se usi Render, usa 'setWebhookRender' invece di 'setTelegramWebhook' standard.
  */
-function inizializzazioneUnaTantum() {
-  checkAndCreateSheets(); // Crea i fogli se non esistono
-  setTelegramWebhook(); // Collega automaticamente il bot al nuovo script
-  Logger.log("✅ Inizializzazione completata.");
-  Logger.log("Lo script sta utilizzando le proprietà salvate correttamente nelle impostazioni del progetto.");
+function setWebhookRender() {
+  checkAndCreateSheets();
+  const renderUrl = "https://laboratorio-odontotecnico.onrender.com/api/telegram-webhook";
+  setTelegramWebhook(renderUrl);
+  Logger.log("🚀 Webhook forzato su Render: " + renderUrl);
 }
