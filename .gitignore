@@ -1,7 +1,0 @@
-node_modules/
-.env
-admin_token.py
-proprieta_script.txt
-*.log
-.vscode/
-.DS_Store
