@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Hub | Gestione Appuntamenti</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .admin-container { padding: 40px 20px; max-width: 1000px; margin: 0 auto; }
+        .request-card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow); border: 1px solid #e2e8f0; }
+        .request-card.handled { opacity: 0.7; border-left: 4px solid #cbd5e1; }
+        .request-info h3 { margin: 0; color: var(--primary-blue); font-size: 1.1rem; }
+        .request-info p { margin: 5px 0; color: var(--muted); font-size: 0.9rem; }
+        .badge-status { padding: 4px 10px; border-radius: 50px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-accettato { background: #dcfce7; color: #166534; }
+        .status-rifiutato { background: #fee2e2; color: #991b1b; }
+        .actions { display: flex; gap: 10px; }
+        .btn-accept { background: #10b981; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; }
+        .btn-reject { background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; }
+        .loader { text-align: center; padding: 50px; }
+        
+        /* Stili per l'accesso */
+        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--dark-blue); z-index: 10000; display: flex; align-items: center; justify-content: center; color: white; flex-direction: column; gap: 20px; }
+        .login-box { background: white; padding: 30px; border-radius: 12px; color: var(--text-main); text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .login-box input { padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 15px; width: 100%; display: block; }
+    </style>
+</head>
+<body class="section-alt">
+    <div id="login-overlay">
+        <div class="login-box">
+            <h2 style="margin-bottom: 15px;">Accesso Riservato</h2>
+            <input type="password" id="admin-pass" placeholder="Inserisci Password">
+            <button onclick="checkAccess()" class="btn">Accedi</button>
+        </div>
+    </div>
+
+    <header>
+        <div class="container">
+            <div class="header-brand">
+                <img src="foto/logo%20marcello.jpeg" alt="Logo" class="logo">
+                <h1>Gestione Richieste</h1>
+            </div>
+            <nav>
+                <a href="index.html" class="nav-link">Sito Web</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="admin-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <h2 style="text-align: left; margin: 0;">Richieste Pendenti</h2>
+            <button onclick="loadRequests()" class="btn" style="padding: 8px 15px; font-size: 0.8rem;"><i class="fas fa-sync"></i> Aggiorna</button>
+        </div>
+
+        <div id="requests-list">
+            <div class="loader"><div class="medical-loader"></div><p>Caricamento dati dal server...</p></div>
+        </div>
+    </main>
+
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwjbZw4OjPB8DsYD_j6qM30RsjuT7gdPY4_lz3x_qUX7R6GIFSWdQlKQIFCGeBKm0xH/exec';
+        const loginOverlay = document.getElementById('login-overlay');
+        const requestsList = document.getElementById('requests-list');
+        const adminPassInput = document.getElementById('admin-pass');
+        let adminToken = '';
+
+        function createElement(tag, className, text) {
+            const el = document.createElement(tag);
+            if (className) el.className = className;
+            if (text !== undefined) el.textContent = text;
+            return el;
+        }
+
+        async function sendAdminRequest(payload) {
+            const data = new URLSearchParams();
+            Object.entries(payload).forEach(([key, value]) => {
+                if (value !== undefined && value !== null) {
+                    data.append(key, value);
+                }
+            });
+            if (!payload.admin_token && adminToken) {
+                data.append('admin_token', adminToken);
+            }
+
+            const response = await fetch(scriptURL, { method: 'POST', body: data });
+            if (!response.ok) {
+                throw new Error('Risposta backend non valida');
+            }
+            return response.json();
+        }
+
+        async function checkAccess() {
+            const token = adminPassInput.value.trim();
+            if (!token) {
+                alert('Inserisci il token di accesso.');
+                return;
+            }
+
+            try {
+                const data = await sendAdminRequest({ action: 'getRequests', admin_token: token });
+                if (!Array.isArray(data)) {
+                    throw new Error('Token non valido');
+                }
+
+                adminToken = token;
+                loginOverlay.style.display = 'none';
+                renderRequests(data);
+            } catch (e) {
+                alert('Token non valido o backend non disponibile.');
+            }
+        }
+
+        async function loadRequests() {
+            try {
+                const data = await sendAdminRequest({ action: 'getRequests' });
+                renderRequests(data);
+            } catch (e) {
+                requestsList.innerHTML = '<p>Errore nel caricamento. Verifica il token e il backend.</p>';
+            }
+        }
+
+        function renderRequests(data) {
+            requestsList.innerHTML = '';
+            if (!Array.isArray(data) || data.length === 0) {
+                requestsList.innerHTML = '<p>Nessuna richiesta da gestire.</p>';
+                return;
+            }
+
+            data.forEach(req => {
+                const status = req.status || 'PENDENTE';
+                const isPending = status === 'PENDENTE';
+                const statusClass = `status-${status.toLowerCase()}`;
+
+                const card = createElement('div', `request-card${!isPending ? ' handled' : ''}`);
+                const info = createElement('div', 'request-info');
+                const badge = createElement('span', `badge-status ${statusClass}`, status);
+                const title = createElement('h3', '', req.name || '');
+                const detail = createElement('p', '', `${req.date || ''} | ${req.reason || ''}`);
+                const email = createElement('p', '', req.email || '');
+                const notes = createElement('p', '', req.notes || 'Nessuna nota');
+                const phone = createElement('p', '', req.phone || '');
+
+                info.appendChild(badge);
+                info.appendChild(title);
+                info.appendChild(detail);
+                info.appendChild(email);
+                info.appendChild(notes);
+                info.appendChild(phone);
+                card.appendChild(info);
+
+                if (isPending) {
+                    const actions = createElement('div', 'actions');
+                    const acceptButton = createElement('button', 'btn-accept', 'Accetta');
+                    const rejectButton = createElement('button', 'btn-reject', 'Rifiuta');
+
+                    acceptButton.type = 'button';
+                    rejectButton.type = 'button';
+                    acceptButton.addEventListener('click', () => handleAction(req.id, 'accept'));
+                    rejectButton.addEventListener('click', () => handleAction(req.id, 'reject'));
+
+                    actions.appendChild(acceptButton);
+                    actions.appendChild(rejectButton);
+                    card.appendChild(actions);
+                }
+
+                requestsList.appendChild(card);
+            });
+        }
+
+        async function handleAction(requestId, action) {
+            if (!confirm(`Sei sicuro di voler ${action === 'accept' ? 'accettare' : 'rifiutare'} questa richiesta?`)) return;
+
+            try {
+                const result = await sendAdminRequest({ action: `${action}Request`, id: requestId });
+                if (result.status === 'success') {
+                    alert('Operazione completata con successo.');
+                    loadRequests();
+                } else {
+                    throw new Error(result.message || 'Errore interno.');
+                }
+            } catch (e) {
+                alert("Errore durante l'operazione: " + e.message);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // L'admin deve inserire il token ad ogni accesso per mantenere il browser più sicuro.
+        });
+    </script>
+</body>
+</html>

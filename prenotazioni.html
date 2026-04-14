@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Area prenotazioni Laboratorio Roso Marcello. Richiedi ritiro impronte, consegna manufatti o preventivi tecnici.">
+    <title>Prenota | Laboratorio Roso Marcello</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="appointments.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="foto/logo%20marcello.jpeg">
+    <!-- Flatpickr per il calendario -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/it.js"></script>
+</head>
+<body>
+    <div id="preloader">
+        <div class="medical-loader"></div>
+    </div>
+
+    <header>
+        <div class="container">
+            <a href="index.html" class="header-brand" aria-label="Torna alla Home">
+                <img src="foto/logo%20marcello.jpeg" alt="Logo" class="logo">
+                <h1>Laboratorio Roso Marcello</h1>
+            </a>
+            <nav id="main-nav">
+                <a href="index.html" class="nav-link"><i class="fas fa-arrow-left"></i> Home</a>
+                <a href="index.html#servizi" class="nav-link">Servizi</a>
+                <a href="index.html#contatti" class="nav-link">Contatti</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container" style="padding: 40px 20px;">
+        <section class="appointment-section">
+            <h2 class="text-gradient" style="font-size: 2.5rem; margin-bottom: 10px;">Prenota il tuo servizio</h2>
+            <p style="text-align: center; margin-bottom: 30px;">Compila il modulo per richiedere un appuntamento o un preventivo tecnico.</p>
+
+            <form id="appointment-form" class="animate-on-scroll is-visible">
+                <div class="form-row-contact">
+                    <div class="form-group">
+                        <label for="name">Nome Studio Dentistico / Dottore</label>
+                        <input type="text" id="name" name="name" required placeholder="Inserisci il nome dello studio dentistico" autocomplete="organization" maxlength="100">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Telefono</label>
+                        <input type="tel" id="phone" name="phone" required placeholder="Recapito telefonico" autocomplete="tel" maxlength="20">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Professionale</label>
+                    <input type="email" id="email" name="email" required placeholder="email@studio.it" autocomplete="email" maxlength="100">
+                </div>
+
+                <!-- Honeypot Field (Anti-Spam) -->
+                <div style="display:none;">
+                    <input type="text" name="honeypot" id="honeypot" tabindex="-1" autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label style="font-weight: 700; color: var(--primary-blue);">Cosa desideri richiedere?</label>
+                    <div class="radio-group">
+                        <label class="radio-option selected">
+                            <input type="radio" name="request_type" value="appuntamento" checked> 
+                            <span>Appuntamento</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="request_type" value="preventivo"> 
+                            <span>Preventivo</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="reason">Tipo di intervento / Motivo</label>
+                    <div id="reason-grid" class="reason-grid"></div>
+                    <input type="hidden" id="reason" name="reason" required>
+                </div>
+
+                <div id="date-group" class="form-group">
+                    <label for="date-picker">Seleziona Data</label>
+                    <input type="text" id="date-picker" name="date" placeholder="Scegli un giorno disponibile" readonly>
+                    
+                    <div id="availability-loader" style="display:none; text-align:center; margin: 10px 0;">
+                        <div class="medical-loader" style="width:20px; height:20px; border-width:3px;"></div>
+                        <p style="font-size: 0.8rem;">Verifica disponibilità...</p>
+                    </div>
+                    
+                    <div id="time-grid" class="time-grid">
+                        <!-- Generato da script.js -->
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="notes">Note aggiuntive (opzionale)</label>
+                    <textarea id="notes" name="notes" rows="3" placeholder="Specifiche tecniche o urgenze..." maxlength="1000"></textarea>
+                </div>
+
+                <button type="submit" class="btn" style="width: 100%; padding: 16px; font-size: 1.1rem; border-radius: 50px; box-shadow: 0 10px 20px rgba(0, 95, 141, 0.15);">
+                    Invia Richiesta
+                </button>
+            </form>
+        </section>
+    </main>
+
+    <footer style="margin-top: 50px;">
+        <p class="copyright">© <span id="year"></span> Laboratorio Roso Marcello. <br> Eccellenza Protesica a Torino.</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="appointments.js"></script>
+</body>
+</html>
