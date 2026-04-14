@@ -1,0 +1,209 @@
+/* Stili specifici per il modulo di prenotazione */
+
+.radio-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.radio-option {
+    min-width: 100px;
+    padding: 8px 20px;
+    font-size: 0.85rem;
+    border: 2px solid var(--muted);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: var(--muted);
+    background-color: var(--bg-alt);
+    user-select: none;
+}
+
+.radio-option input[type="radio"] { 
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.radio-option.selected { 
+    border-color: var(--primary-blue); 
+    background-color: var(--accent-blue); 
+    color: var(--primary-blue); 
+    box-shadow: 0 2px 8px rgba(0, 95, 141, 0.1); 
+}
+
+.radio-option:hover:not(.selected) { 
+    border-color: var(--secondary-blue); 
+    background-color: #e6f7ff; 
+}
+
+/* Calendario Flatpickr - Overrides */
+.flatpickr-calendar {
+    background: #ffffff !important;
+    box-shadow: 0 1px 3px 0 rgba(60, 64, 67, 0.30), 0 4px 12px 4px rgba(60, 64, 67, 0.20) !important;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-family: inherit;
+    margin-top: 10px;
+}
+
+.flatpickr-day.selected, .flatpickr-day.selected:hover {
+    background: #1a73e8 !important;
+    border-color: #1a73e8 !important;
+    color: #ffffff !important;
+}
+
+.flatpickr-day.today {
+    color: #1a73e8 !important;
+    background: #e8f0fe;
+}
+
+#date-picker {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' /%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 18px;
+}
+
+/* Griglia orari */
+.time-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 10px;
+    margin-top: 20px;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.time-grid.visible {
+    max-height: 400px;
+    opacity: 1;
+    margin-bottom: 20px;
+}
+
+.time-slot {
+    padding: 10px 5px;
+    border: 1px solid var(--primary-blue);
+    color: var(--primary-blue);
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+}
+
+.time-slot:hover { background: var(--accent-blue); }
+.time-slot.selected {
+    background: var(--primary-blue);
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 95, 141, 0.2);
+}
+
+#date-group {
+    transition: opacity 0.4s ease, max-height 0.4s ease;
+    max-height: 800px;
+    opacity: 1;
+    overflow: hidden;
+}
+
+#date-group.hidden-group {
+    max-height: 0;
+    opacity: 0;
+    margin-bottom: 0 !important;
+    pointer-events: none;
+}
+
+/* Toggle Switch (opzionale) */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #cbd5e1;
+  transition: .4s;
+  border-radius: 34px;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px; width: 18px;
+  left: 3px; bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+input:checked + .slider { background-color: var(--primary-blue); }
+input:checked + .slider:before { transform: translateX(26px); }
+
+/* Nuova Griglia per i Motivi (Intervento) */
+.reason-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 120px);
+    gap: 12px;
+    margin-top: 10px;
+    justify-content: center;
+}
+
+.reason-card {
+    width: 120px;
+    background: var(--bg-alt);
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 15px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Cruciale: Impedisce all'icona e al testo di bloccare il clic sulla card */
+.reason-card i, 
+.reason-card span {
+    pointer-events: none;
+}
+
+.reason-card i {
+    font-size: 1.3rem;
+    color: var(--muted);
+}
+
+.reason-card span {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.reason-card:hover {
+    border-color: var(--secondary-blue);
+    background: #f8fafc;
+}
+
+.reason-card.selected {
+    border-color: var(--primary-blue);
+    background: var(--accent-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 95, 141, 0.1);
+}
+
+.reason-card.selected i {
+    color: var(--primary-blue);
+}

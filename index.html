@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="it" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Laboratorio Odontotecnico Roso Marcello a Torino: Eccellenza in protesi flessibili Deflex, soluzioni mobili e fisse ad alta precisione per professionisti del settore dentale.">
+  <meta name="author" content="Laboratorio Roso Marcello">
+  <title>Eccellenza Protesica | Laboratorio Odontotecnico Roso Marcello</title>
+
+  <!-- Favicon placeholder -->
+  <link rel="icon" type="image/png" href="foto/logo%20marcello.jpeg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <!-- FontAwesome per icone medicali -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+
+  <link rel="preload" as="image" href="foto/deflex.jpeg">
+</head>
+
+<body>
+
+<!-- Preloader Automazione -->
+<div id="preloader">
+  <div class="medical-loader"></div>
+  <p>Laboratorio Roso Marcello</p>
+</div>
+
+<!-- Modal Scelta Tipologia Utente -->
+<div id="user-selection-modal" class="modal active" style="display: flex; z-index: 10000;">
+  <div class="modal-inner" style="background: white; padding: 40px; border-radius: 20px; text-align: center; max-width: 500px;">
+    <h2 class="text-gradient">Benvenuto</h2>
+    <p style="margin-bottom: 25px;">Per offrirti un servizio su misura, indicaci chi sei:</p>
+    <div style="display: flex; gap: 20px; flex-direction: column;">
+      <button class="btn user-type-btn" data-type="studio">Sono uno Studio Dentistico / Dottore</button>
+      <button class="btn user-type-btn" data-type="privato" style="background: var(--secondary-blue);">Sono un Privato</button>
+    </div>
+  </div>
+</div>
+
+<header>
+  <div class="container">
+    <a href="#" class="header-brand">
+      <img src="foto/logo%20marcello.jpeg" alt="Logo Laboratorio Roso Marcello" class="logo">
+      <h1>Laboratorio Odontotecnico Roso Marcello</h1>
+    </a>
+    <button class="hamburger-menu" aria-label="Menu di navigazione" aria-controls="main-nav" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <nav id="main-nav" role="navigation">
+      <a href="#servizi" class="nav-link">Servizi</a>
+      <a href="#chi-siamo" class="nav-link">Il Laboratorio</a>
+      <a href="#gallery" class="nav-link">Workflow & Casi</a>
+      <a href="#dove-siamo" class="nav-link">Dove Siamo</a>
+      <a href="prenotazioni.html" class="nav-link" style="color: var(--primary-blue); font-weight: 700;">Prenota</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section id="home" class="container hero">
+    <div class="hero-text">
+      <span class="badge">Professional Dental Solutions</span>
+      <h2>Ingegneria Protesica <br><span class="text-gradient">al servizio dell'estetica.</span></h2>
+      <p class="hero-description">
+        Partner strategico per studi dentistici. Specializzazione certificata in <strong>sistemi Deflex®</strong>, protesi mobili e riabilitazioni fisse ad alta precisione.
+      </p>
+      <a href="prenotazioni.html" class="btn">Prenota un Appuntamento</a>
+    </div>
+    <div class="hero-img">
+      <img src="foto/deflex.jpeg" alt="Tecnologia Deflex" fetchpriority="high">
+    </div>
+  </section>
+
+  <section id="servizi" class="container section-alt animate-on-scroll">
+    <h2>Soluzioni Odontotecniche d'Eccellenza</h2>
+
+    <div class="cards">
+      <div class="card animate-on-scroll" data-delay="0">
+        <i class="fas fa-tooth card-icon"></i>
+        <h3>Riabilitazioni Fisse</h3>
+        <p>Corone e ponti estetici realizzati con precisione e materiali di alta qualità.</p>
+      </div>
+
+      <div class="card animate-on-scroll" data-delay="100">
+        <i class="fas fa-grin-alt card-icon"></i>
+        <h3>Protesi Mobili</h3>
+        <p>Soluzioni confortevoli e personalizzate per ogni paziente.</p>
+      </div>
+
+      <div class="card animate-on-scroll" data-delay="200">
+        <i class="fas fa-microscope card-icon"></i>
+        <h3>Protesi Flessibili in Deflex</h3>
+        <p>
+          Siamo leader nella progettazione di manufatti flessibili: massima resilienza, biocompatibilità ed estetica superiore.
+        </p>
+      </div>
+
+      <div class="card animate-on-scroll" data-delay="300">
+        <i class="fas fa-tools card-icon"></i>
+        <h3>Assistenza Tecnica</h3>
+        <p>Protocollo di service rapido per riparazioni e modifiche urgenti, garantendo continuità clinica al tuo studio.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="chi-siamo" class="container animate-on-scroll">
+    <h2>Tecnologia e Tradizione</h2>
+    <div class="about-wrapper">
+      <div class="about-text animate-on-scroll">
+        <p>
+          Il Laboratorio Odontotecnico Roso Marcello rappresenta un punto di riferimento a Torino per la precisione e la cura del dettaglio.
+          Offriamo supporto professionale agli studi dentistici, integrando tecniche moderne e un’elevata specializzazione
+          nelle <strong>protesi flessibili in Deflex</strong>, garantendo qualità, funzionalità ed estetica.
+        </p>
+      </div>
+      <div class="about-img">
+        <img src="https://lh3.googleusercontent.com/p/AF1QipNSCnghZTPw3Vxg7UfDlb6VIZw3PlW1uTVrVAPS=s680-w680-h510-rw" alt="Esterno del laboratorio odontotecnico Roso Marcello" class="animate-on-scroll" loading="lazy">
+      </div>
+    </div>
+  </section>
+
+  <section id="gallery" class="container section-alt animate-on-scroll">
+    <h2>Casi Clinici & Workflow</h2>
+    <div class="gallery-wrapper" id="main-gallery">
+      <div class="gallery">
+        <video src="foto/video.mp4" autoplay loop muted playsinline title="Video dimostrativo di una protesi flessibile"></video>
+        <img src="foto/foto%20protesi.jpeg" alt="Protesi dentaria flessibile Deflex" loading="lazy">
+        <img src="foto/foto%20galleria%202.jpeg" alt="Lavorazione di una protesi in laboratorio" loading="lazy">
+        <img src="foto/foto%20galleria%203.jpeg" alt="Dettaglio di una protesi fissa" loading="lazy">
+        <img src="foto/foto%20galleria%204.jpeg" alt="Strumenti di precisione del laboratorio odontotecnico" loading="lazy">
+      </div>
+      <button class="carousel-btn prev" aria-label="Immagine precedente">‹</button>
+      <button class="carousel-btn next" aria-label="Immagine successiva">›</button>
+    </div>
+  </section>
+
+  <section id="clienti" class="container animate-on-scroll">
+    <h2>Successi Clinici</h2>
+    <p class="section-description">La sinergia tra tecnico e clinico garantisce la piena soddisfazione del paziente finale.</p>
+    <div class="gallery-wrapper" id="clients-gallery">
+      <div class="gallery">
+        <img src="foto/foto-cliente-1.jpeg" alt="Cliente soddisfatto con protesi flessibile">
+        <img src="foto/foto-cliente-2.jpeg" alt="Cliente soddisfatto con protesi mobili">
+        <img src="foto/foto-cliente-3.jpeg" alt="Cliente soddisfatto con protesi fisse">
+        <img src="foto/foto-cliente-4.jpeg" alt="Cliente soddisfatto con riparazioni veloci">
+        <img src="foto/foto-cliente-5.jpeg" alt="Cliente soddisfatto con riparazioni veloci">
+        <img src="foto/foto-cliente-6.jpeg" alt="Cliente soddisfatto con riparazioni veloci">
+
+
+      </div>
+      <button class="carousel-btn prev" aria-label="Immagine precedente">‹</button>
+      <button class="carousel-btn next" aria-label="Immagine successiva">›</button>
+    </div>
+  </section>
+
+  <section id="dove-siamo" class="container section-alt animate-on-scroll">
+    <h2>Presenza sul Territorio</h2>
+    <div class="map-wrapper">
+      <div class="map-container">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2816.892795255835!2d7.712745684499114!3d45.09325425660882!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4788727285b51b2f%3A0xcdd4323b449b080c!2sLABORATORIO%20ODONTOTECNICO%20ROSO%20MARCELLO!5e0!3m2!1sit!2sit!4v1717081831872!5m2!1sit!2sit" title="Mappa del Laboratorio Odontotecnico Roso Marcello" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+      <div class="map-info">
+        <p>
+          <strong>Indirizzo:</strong><br>
+          Corso Regio Parco, 168<br>
+           10154 Torino (TO)
+        </p>
+        <a href="https://www.google.com/maps/dir/?api=1&destination=Laboratorio+Odontotecnico+Roso+Marcello,+Corso+Regio+Parco,+168,+10154+Torino+TO" target="_blank" rel="noopener noreferrer" class="btn">Ottieni Indicazioni</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="contatti" class="container animate-on-scroll">
+    <div class="contatti-wrapper">
+      <h2>Contatto Professionale</h2>
+      <div class="contatti-info animate-on-scroll" data-delay="0">
+        <p>Siamo pronti ad affiancare il tuo studio nella realizzazione di manufatti d'eccellenza. Contattaci per un primo colloquio conoscitivo o un preventivo tecnico.</p>
+        <p><i class="fas fa-envelope"></i> <strong>Email:</strong> <a href="mailto:contatti.rosomarcello@gmail.com">contatti.rosomarcello@gmail.com</a></p>
+        <p><i class="fas fa-phone"></i> <strong>Telefono:</strong> <a href="tel:3381731927">338 1731927</a></p>
+        <p><i class="fas fa-map-marker-alt"></i> <strong>Sede:</strong> Corso Regio Parco, 168 - 10154 Torino (TO)</p>
+        <a href="https://wa.me/393381731927" class="btn whatsapp-contact" target="_blank" rel="noopener noreferrer">
+          <i class="fab fa-whatsapp"></i> Contattaci su WhatsApp
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="container animate-on-scroll" style="text-align: center; padding: 60px 0 100px;">
+    <h2 style="margin-bottom: 20px;">Pronto a collaborare con noi?</h2>
+    <p style="margin-bottom: 30px; color: var(--muted);">Semplifica la gestione dei tuoi casi clinici o richiedi un intervento rapido tramite il nostro sistema online.</p>
+    <a href="prenotazioni.html" class="btn" style="padding: 18px 45px; font-size: 1.2rem; border-radius: 50px; box-shadow: 0 10px 25px rgba(0, 95, 141, 0.2);">Prenota un Appuntamento</a>
+  </section>
+</main>
+
+<footer>
+  <div class="social-links">
+    <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+      <i class="fab fa-facebook-f"></i>
+    </a>
+    <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+      <i class="fab fa-instagram"></i>
+    </a>
+    <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+      <i class="fab fa-linkedin-in"></i>
+    </a>
+  </div>
+  <p class="copyright">© <span id="year"></span> Laboratorio Odontotecnico Roso Marcello. <br> Eccellenza Protesica e Innovazione Tecnologica.</p>
+</footer>
+
+<div class="modal" id="image-modal">
+  <div class="modal-inner">
+    <button class="modal-close" aria-label="Chiudi">✕</button>
+    <button class="modal-nav prev" aria-label="Precedente">‹</button>
+    <img id="modal-img" src="" alt="Immagine ingrandita">
+    <button class="modal-nav next" aria-label="Successiva">›</button>
+  </div>
+</div>
+
+<div class="floating-contact-bar">
+  <a href="https://wa.me/393381731927" class="contact-icon whatsapp" title="WhatsApp" target="_blank" rel="noopener noreferrer">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+  <a href="tel:3381731927" class="contact-icon phone" title="Telefono">
+    <i class="fas fa-phone"></i>
+  </a>
+  <a href="mailto:contatti.rosomarcello@gmail.com" class="contact-icon mail" title="Email">
+    <i class="fas fa-envelope"></i>
+  </a>
+</div>
+
+<a href="prenotazioni.html" class="fixed-quote-btn" id="floating-book-btn">Prenota Ora</a>
+
+<script src="script.js"></script>
+
+</body>
+</html>
