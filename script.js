@@ -2,17 +2,21 @@
  * Laboratorio Odontotecnico Roso Marcello
  * Ingegneria Frontend Professionale
  */
+
+// 1. Sveglia il server Render immediatamente (Free Tier wakeup)
+const bridgeURL = 'https://laboratorio-odontotecnico.onrender.com/api/prenotazioni';
+const rootURL = 'https://laboratorio-odontotecnico.onrender.com/';
+
+// Ping leggero alla root per svegliare l'istanza
+fetch(rootURL).catch(() => {});
+
+// Tracking della visita (sveglia anche l'intera catena di backend)
+fetch(bridgeURL, {
+    method: 'POST',
+    body: new URLSearchParams({ action: 'trackPageVisit', details: `Visualizzazione: ${document.title || 'Sito Web'}` })
+}).catch(() => {});
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Tracking delle visite reali al caricamento della pagina
-    const trackVisit = () => {
-        const bridgeURL = 'https://laboratorio-odontotecnico.onrender.com/api/prenotazioni';
-        const pageName = document.title || 'Sito Web';
-        fetch(bridgeURL, {
-            method: 'POST',
-            body: new URLSearchParams({ action: 'trackPageVisit', details: `Visualizzazione: ${pageName}` })
-        }).catch(() => {}); // Fallimento silenzioso per non disturbare l'utente
-    };
-    trackVisit();
 
     // 0. Automazione Preloader
     const preloader = document.getElementById('preloader');

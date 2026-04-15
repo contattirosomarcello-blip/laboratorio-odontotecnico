@@ -51,7 +51,7 @@ app.post('/api/telegram-webhook', async (req, res) => {
     try {
         if (!GAS_URL) throw new Error("GAS_URL non configurato nelle variabili d'ambiente.");
 
-        const timestamp = new Date().toLocaleString('it-IT');
+        const timestamp = new Date().toISOString();
         if (req.body.callback_query) {
             const action = req.body.callback_query.data;
             console.log(`[${timestamp}] Telegram Callback: Azione pulsante ricevuta -> ${action}`);
@@ -72,7 +72,7 @@ app.post('/api/telegram-webhook', async (req, res) => {
         res.status(200).send('OK'); 
     } catch (error) {
         const errorDetail = error.response ? `GAS Error: ${error.response.status}` : error.message;
-        console.error(`[${new Date().toLocaleString('it-IT')}] Errore nel bridge Telegram:`, errorDetail);
+        console.error(`[${new Date().toISOString()}] Errore nel bridge Telegram:`, errorDetail);
         res.status(200).send('OK'); 
     }
 });

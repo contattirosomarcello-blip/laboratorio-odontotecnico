@@ -41,7 +41,7 @@
     <div id="login-overlay">
         <div class="login-box">
             <h2 style="margin-bottom: 15px;">Accesso Riservato</h2>
-            <input type="password" id="admin-pass" placeholder="Inserisci Password">
+            <input type="password" id="admin-pass" placeholder="Inserisci Password" onkeypress="if(event.key === 'Enter') checkAccess()">
             <button onclick="checkAccess()" class="btn">Accedi</button>
         </div>
     </div>
@@ -84,6 +84,9 @@
 
     <script>
         const scriptURL = 'https://laboratorio-odontotecnico.onrender.com/api/prenotazioni';
+        // Ping immediato per svegliare Render in background
+        fetch('https://laboratorio-odontotecnico.onrender.com/').catch(() => {});
+
         const loginOverlay = document.getElementById('login-overlay');
         
         // Definizioni globali delle liste per i Tab
