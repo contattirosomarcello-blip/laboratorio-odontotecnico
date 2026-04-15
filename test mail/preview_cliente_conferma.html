@@ -1,31 +1,56 @@
 <!DOCTYPE html>
-<html lang="it">
-<head><meta charset="UTF-8"><title>Anteprima Cliente - Conferma Appuntamento</title></head>
-<body style="font-family: 'Poppins', Arial, sans-serif; line-height: 1.6; color: #2c3e50; background-color: #f8f9fa; margin: 0; padding: 20px;">
-    <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.08);">
-        <div style="background: linear-gradient(135deg, #28a745, #218838); padding: 20px; text-align: center;">
-            <img src="https://raw.githubusercontent.com/contattirosomarcello-blip/laboratorio-odontotecnico/main/foto/logo%20marcello.jpeg" alt="Laboratorio Roso Marcello" style="max-width: 120px; border-radius: 50%; border: 3px solid white;">
-        </div>
-        <div style="padding: 30px;">
-            <h2 style="color: #218838; text-align: center; margin-top: 0;">Il tuo appuntamento è CONFERMATO!</h2>
-            <p>Gentile {{ nome }},</p>
-            <p>Siamo felici di confermare il tuo appuntamento presso il nostro laboratorio.</p>
-
-            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #28a745;">
-                <h3 style="margin-top: 0; color: #218838;">Dettagli dell'appuntamento:</h3>
-                <p><strong>📅 Data:</strong> {{ data_appuntamento }}</p>
-                <p><strong>🕒 Ora:</strong> {{ ora_appuntamento }}</p>
-            </div>
-            
-            <p>Ti aspettiamo in <strong>Corso Regio Parco, 168 - Torino</strong>.</p>
-            <p>Se hai bisogno di modificare o cancellare l'appuntamento, ti preghiamo di contattarci telefonicamente al più presto.</p>
-        </div>
-        <div style="background-color: #063969; color: #ffffff; padding: 20px; text-align: center; font-size: 0.9em;">
-            <p style="margin: 0 0 10px 0;">
-                <strong>Laboratorio Odontotecnico Roso Marcello</strong><br>
-                Tel: 338 1731927
-            </p>
-        </div>
+<html>
+<head>
+  <base target="_top">
+  <style>
+    .email-body { font-family: 'Poppins', 'Segoe UI', sans-serif; line-height: 1.6; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; }
+    .header { background-color: #005f8d; color: #ffffff; padding: 30px; text-align: center; }
+    .logo-img { width: 80px; height: 80px; border-radius: 50%; border: 3px solid #ffffff; margin-bottom: 10px; }
+    .content { padding: 30px; background-color: #ffffff; }
+    .footer { background-color: #f8fafc; color: #64748b; padding: 20px; text-align: center; font-size: 12px; }
+    .status-badge { display: inline-block; padding: 6px 12px; background-color: #dcfce7; color: #166534; border-radius: 20px; font-weight: bold; font-size: 14px; margin-bottom: 20px; }
+    .details-box { background-color: #f1f5f9; border-radius: 8px; padding: 20px; margin-top: 20px; }
+    .details-row { display: flex; margin-bottom: 10px; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; }
+    .details-label { font-weight: bold; width: 130px; color: #005f8d; }
+    .btn { display: inline-block; padding: 12px 25px; background-color: #005f8d; color: #ffffff !important; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <div class="email-body">
+    <div class="header">
+      <img src="https://raw.githubusercontent.com/contattirosomarcello-blip/laboratorio-odontotecnico/main/foto/logo%20marcello.jpeg" class="logo-img">
+      <h1 style="margin:0; font-size: 20px;">Laboratorio Roso Marcello</h1>
     </div>
+    <div class="content">
+      <div class="status-badge">✓ RICHIESTA ACCETTATA</div>
+      <p>Gentile <strong><?= data.name ?></strong>,</p>
+      <p>Siamo lieti di confermarti che la tua richiesta di <strong><?= data.type ?></strong> è stata presa in carico ed accettata dal nostro laboratorio.</p>
+      
+      <div class="details-box">
+        <div class="details-row">
+          <span class="details-label">Servizio:</span>
+          <span><?= data.reason ?></span>
+        </div>
+        <div class="details-row">
+          <span class="details-label">Data/Ora:</span>
+          <span><?= data.date ?></span>
+        </div>
+        <? if (data.notes) { ?>
+        <div class="details-row" style="border-bottom: none;">
+          <span class="details-label">Note:</span>
+          <span><?= data.notes ?></span>
+        </div>
+        <? } ?>
+      </div>
+
+      <p style="margin-top: 25px;">Ti aspettiamo presso la nostra sede in Corso Regio Parco, 168 a Torino. Per qualsiasi variazione, puoi contattarci direttamente rispondendo a questa email.</p>
+      
+      <a href="https://labodontoroso.it" class="btn">Visita il nostro sito</a>
+    </div>
+    <div class="footer">
+      <p>© <?= new Date().getFullYear() ?> Laboratorio Odontotecnico Roso Marcello<br>
+      Torino | Tel: 338 1731927 | Eccellenza Protesica</p>
+    </div>
+  </div>
 </body>
 </html>

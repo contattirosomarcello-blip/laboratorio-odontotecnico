@@ -3,17 +3,11 @@
  * Gestisce l'automazione dei fogli di calcolo e la ricezione dei dati.
  */
 
-// --- CONFIGURAZIONE MANUALE (Lasciare vuoto se le proprietà sono gestite in 'Impostazioni progetto > Proprietà script') ---
-const CONFIG = {
-  ADMIN_TOKEN: "",
-  TELEGRAM_TOKEN: "",
-  TELEGRAM_CHAT_ID: ""
-};
-
 // Configurazione Telegram è gestita in PropertiesService per mantenere i segreti fuori dal codice
 const SHEET_NAMES = {
   APPUNTAMENTO: "appuntamento",
-  PREVENTIVO: "preventivo"
+  PREVENTIVO: "preventivo",
+  VISITS: "visite"
 };
 
 // Intestazioni standard per i fogli di lavoro
@@ -22,22 +16,19 @@ const HEADERS = ["ID", "Data", "Nome", "Telefono", "Email", "Motivo", "Messaggio
 const VALID_REQUEST_TYPES = ["preventivo", "appuntamento"];
 
 function getSecretProperty(key) {
-  // 1. Prova a leggere dalle Proprietà dello Script (Database interno sicuro)
+  // Utilizzo ESCLUSIVO delle Proprietà dello Script (Vault sicuro di Google)
   const value = PropertiesService.getScriptProperties().getProperty(key);
   if (value && String(value).trim() !== "") {
     return String(value).trim();
   }
 
-  // 2. Fallback: Prova a leggere dall'oggetto CONFIG (utile se le Proprietà Script non sono ancora propagate)
-  if (CONFIG[key] && String(CONFIG[key]).trim() !== "") {
-    return String(CONFIG[key]).trim();
-  }
-
-  throw new Error("Proprietà mancante: " + key + ". Assicurati di averla inserita in 'Impostazioni progetto > Proprietà script' o nel blocco CONFIG all'inizio del file.");
+  throw new Error(`Sicurezza: Proprietà '${key}' non configurata nel vault di sistema.`);
 }
 
 function getAdminToken() {
-  return getSecretProperty("ADMIN_TOKEN");
+  const token = getSecretProperty("ADMIN_TOKEN");
+  if (!token || token.length < 8) throw new Error("ADMIN_TOKEN non sicuro o non configurato.");
+  return token;
 }
 
 function getTelegramToken() {
@@ -49,7 +40,22 @@ function getTelegramChatId() {
 }
 
 function isValidAdminRequest(params) {
-  return params && String(params.admin_token || "").trim() === getAdminToken();
+  const tokenReceived = params ? params.admin_token : null;
+  
+  if (!tokenReceived) {
+    console.warn("[Auth] Token mancante nella richiesta (params.admin_token è nullo).");
+    return false;
+  }
+
+  // Normalizzazione rigorosa: rimuove spazi, tabulazioni e newline
+  const received = String(tokenReceived).replace(/\s+/g, '');
+  const expected = String(getAdminToken()).replace(/\s+/g, '');
+  
+  if (received !== expected) {
+    console.warn(`[Auth] Mismatch - Ricevuto (len: ${received.length}), Atteso (len: ${expected.length})`);
+    return false;
+  }
+  return true;
 }
 
 function sanitizeText(str) {
@@ -70,19 +76,48 @@ function checkAndCreateSheets() {
     let sheet = ss.getSheetByName(name);
     if (!sheet) {
       sheet = ss.insertSheet(name);
-      sheet.appendRow(HEADERS);
+      
+      // Se è il foglio visite, usiamo intestazioni diverse
+      const isVisits = name === SHEET_NAMES.VISITS;
+      const currentHeaders = isVisits ? ["Data e Ora", "Tipo Evento", "Dettagli"] : HEADERS;
+      
+      sheet.appendRow(currentHeaders);
       
       // Formattazione professionale dell'intestazione
-      const headerRange = sheet.getRange(1, 1, 1, HEADERS.length);
+      const headerRange = sheet.getRange(1, 1, 1, currentHeaders.length);
       headerRange.setFontWeight("bold")
                  .setBackground("#005f8d") // Deep Medical Blue dal brand
                  .setFontColor("#ffffff")
                  .setHorizontalAlignment("center");
       
       sheet.setFrozenRows(1); // Blocca la prima riga
-      sheet.autoResizeColumns(1, HEADERS.length);
+      sheet.autoResizeColumns(1, currentHeaders.length);
+      
+      // Imposta il formato delle colonne Telefono e ID come "Testo" per evitare errori di formattazione
+      if (!isVisits) {
+        sheet.getRange("A:A").setNumberFormat("@"); // ID
+        sheet.getRange("D:D").setNumberFormat("@"); // Telefono
+      }
     }
   });
+}
+
+/**
+ * Trigger che si attiva al momento dell'invio di un Google Form collegato.
+ */
+function onFormSubmit(e) {
+  const namedValues = e.namedValues;
+  const requestData = {
+    name: namedValues['Nome'][0] || namedValues['Nome Studio Dentistico / Dottore'][0],
+    email: namedValues['Email'][0] || namedValues['Email Professionale'][0],
+    phone: namedValues['Telefono'][0],
+    reason: namedValues['Motivo'][0] || namedValues['Tipo di intervento / Motivo'][0],
+    notes: namedValues['Messaggio'][0] || namedValues['Note aggiuntive (opzionale)'][0],
+    type: namedValues['Tipo'][0] || "appuntamento",
+    date: namedValues['Data'][0] || ""
+  };
+  
+  return processNewRequest(requestData);
 }
 
 /**
@@ -121,6 +156,10 @@ function doPost(e) {
           if (!params.action || !params.id) {
             throw new Error("Callback Telegram non valido.");
           }
+        } else if (contents.message || contents.edited_message) {
+          // Ignora messaggi testuali o modifiche ai messaggi per evitare errori nei log
+          return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Update Telegram ignorato (non è una callback)" }))
+            .setMimeType(ContentService.MimeType.TEXT);
         }
       } catch (err) {
         // Non è un JSON o non è un callback di Telegram, procedi normalmente
@@ -130,6 +169,13 @@ function doPost(e) {
     // Anti-spam honeypot
     if (!isTelegram && params.honeypot && String(params.honeypot).trim() !== "") {
       return ContentService.createTextOutput(JSON.stringify({ status: "error", message: "Spam rilevato." }))
+        .setMimeType(ContentService.MimeType.TEXT);
+    }
+
+    // Gestione Tracking Visita Pubblica (Sito Web)
+    if (params.action === "trackPageVisit") {
+      recordVisit("Visita Sito", params.details || "Home Page");
+      return ContentService.createTextOutput(JSON.stringify({ status: "success" }))
         .setMimeType(ContentService.MimeType.TEXT);
     }
 
@@ -154,9 +200,10 @@ function doPost(e) {
         let allData = [];
         [SHEET_NAMES.APPUNTAMENTO, SHEET_NAMES.PREVENTIVO].forEach(name => {
           const sheet = ss.getSheetByName(name);
+          if (!sheet) return;
           const rows = sheet.getDataRange().getValues();
-          if (rows.length <= 1) return;
           
+          if (rows.length <= 1) return;
           rows.shift(); // Rimuovi intestazioni
 
           rows.forEach(row => {
@@ -169,7 +216,19 @@ function doPost(e) {
           });
         });
 
-        return ContentService.createTextOutput(JSON.stringify(allData))
+        // Calcolo conteggio visite
+        let visitCount = 0;
+        const visitSheet = ss.getSheetByName(SHEET_NAMES.VISITS);
+        if (visitSheet) {
+          visitCount = Math.max(0, visitSheet.getLastRow() - 1);
+        }
+
+        const response = {
+          requests: allData,
+          stats: { visits: visitCount }
+        };
+
+        return ContentService.createTextOutput(JSON.stringify(response))
           .setMimeType(ContentService.MimeType.TEXT);
       }
 
@@ -214,9 +273,25 @@ function doPost(e) {
           editTelegramMessage(updateData.chatId, updateData.msgId, updateData.status, updateData.rowData, updateData.type);
         }
 
+        // BUG FIX: Spostata notifica email fuori dal blocco Telegram per funzionare anche da Admin Hub Web
+        const clientEmail = updateData && updateData.rowData ? String(updateData.rowData[4] || "").trim() : "";
+        if (clientEmail && isValidEmail(clientEmail) && clientEmail.toLowerCase() !== "undefined") {
+          sendEmailNotification({
+            id: requestId,
+            name: updateData.rowData[2],
+            email: updateData.rowData[4],
+            status: newStatus,
+            type: updateData.type,
+            reason: updateData.rowData[5],
+            date: updateData.rowData[1],
+            phone: updateData.rowData[3],
+            notes: updateData.rowData[6]
+          }, "STATUS_UPDATE");
+        }
+
         if (isTelegram) {
           if (callbackQueryId) {
-            answerTelegramCallback(callbackQueryId, updateData ? `Richiesta ${newStatus}` : "Errore: ID non trovato");
+            answerTelegramCallback(callbackQueryId, updateData ? `✅ Richiesta ${newStatus}` : "⚠️ Errore: ID non trovato");
           }
           if (!updateData) {
             // Se non trovato, invia un messaggio di avviso
@@ -240,58 +315,17 @@ function doPost(e) {
     const requestType = sanitizeText(params.request_type);
     if (!VALID_REQUEST_TYPES.includes(requestType)) throw new Error("Tipo di richiesta non valido.");
 
-    const name = sanitizeText(params.name);
-    const phone = sanitizeText(params.phone);
-    const email = sanitizeText(params.email);
-    const reason = sanitizeText(params.reason);
-    const notes = sanitizeText(params.notes || "");
-    const date = sanitizeText(params.date || "");
+    const result = processNewRequest({
+      name: sanitizeText(params.name),
+      phone: sanitizeText(params.phone),
+      email: sanitizeText(params.email),
+      reason: sanitizeText(params.reason),
+      notes: sanitizeText(params.notes),
+      type: requestType,
+      date: sanitizeText(params.date)
+    });
 
-    if (!name) throw new Error("Il nome è obbligatorio.");
-    if (!email || !isValidEmail(email)) throw new Error("Email non valida.");
-    if (!phone) throw new Error("Il telefono è obbligatorio.");
-    if (!reason) throw new Error("Il motivo è obbligatorio.");
-    if (requestType === "appuntamento" && !date) throw new Error("La data è obbligatoria per gli appuntamenti.");
-
-    checkAndCreateSheets();
-    const targetSheetName = requestType === "preventivo" ? SHEET_NAMES.PREVENTIVO : SHEET_NAMES.APPUNTAMENTO;
-    const requestId = Utilities.getUuid();
-
-    const telegramMessageInfo = sendTelegramNotification({
-      name: name,
-      request_type: requestType,
-      phone: phone,
-      reason: reason,
-      date: date,
-      notes: notes
-    }, requestId);
-
-    const rowData = [
-      requestId,
-      date || new Date().toLocaleString('it-IT'),
-      name,
-      phone,
-      email,
-      reason,
-      notes,
-      "PENDENTE",
-      telegramMessageInfo ? String(telegramMessageInfo.chat_id) : "",
-      telegramMessageInfo ? String(telegramMessageInfo.message_id) : ""
-    ];
-
-    const lock = LockService.getScriptLock();
-    lock.waitLock(20000); // Lock solo per l'append finale
-    const sheet = ss.getSheetByName(targetSheetName);
-    sheet.appendRow(rowData);
-    lock.releaseLock();
-    
-    const response = {
-      status: "success",
-      result: "success",
-      id: requestId
-    };
-
-    return ContentService.createTextOutput(JSON.stringify(response))
+    return ContentService.createTextOutput(JSON.stringify(result))
       .setMimeType(ContentService.MimeType.TEXT);
       
   } catch (error) {
@@ -302,10 +336,75 @@ function doPost(e) {
 }
 
 /**
+ * Logica centralizzata per elaborare una nuova richiesta
+ */
+function processNewRequest(data) {
+  if (!data.name) throw new Error("Il nome è obbligatorio.");
+  if (!data.email || !isValidEmail(data.email)) throw new Error("Email non valida.");
+  if (!data.phone) throw new Error("Il telefono è obbligatorio.");
+
+  checkAndCreateSheets();
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const targetSheetName = data.type === "preventivo" ? SHEET_NAMES.PREVENTIVO : SHEET_NAMES.APPUNTAMENTO;
+  const requestId = Utilities.getUuid();
+
+  const telegramInfo = sendTelegramNotification({
+    name: data.name,
+    request_type: data.type,
+    phone: data.phone,
+    reason: data.reason,
+    date: data.date,
+    notes: data.notes
+  }, requestId);
+
+  try {
+    sendEmailNotification({
+      id: requestId,
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      reason: data.reason,
+      date: data.date,
+      notes: data.notes,
+      type: data.type
+    }, "NEW_REQUEST");
+  } catch (e) {
+    console.error("Errore invio email: " + e.message);
+  }
+
+  const rowData = [
+    requestId,
+    data.date || new Date().toLocaleString('it-IT'),
+    data.name,
+    data.phone,
+    data.email,
+    data.reason,
+    data.notes,
+    "PENDENTE",
+    telegramInfo ? String(telegramInfo.chat_id) : "",
+    telegramInfo ? String(telegramInfo.message_id) : ""
+  ];
+
+  const lock = LockService.getScriptLock();
+  lock.waitLock(15000);
+  const sheet = ss.getSheetByName(targetSheetName);
+  sheet.appendRow(rowData);
+  SpreadsheetApp.flush();
+  lock.releaseLock();
+
+  return { status: "success", result: "success", id: requestId };
+}
+
+/**
  * Invia una notifica a Telegram
  */
 function sendTelegramNotification(params, requestId) {
   const escapeHTML = (str) => str ? str.toString().replace(/[&<>"']/g, m => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[m])) : '';
+
+  if (!params) {
+    console.warn("sendTelegramNotification: params è undefined. Verifica di non aver eseguito la funzione manualmente.");
+    return null;
+  }
 
   const name = escapeHTML(params.name);
   const type = escapeHTML(params.request_type || "Richiesta").toUpperCase();
@@ -313,13 +412,16 @@ function sendTelegramNotification(params, requestId) {
   const reason = escapeHTML(params.reason);
   const date = escapeHTML(params.date || "N/A");
   const notes = escapeHTML(params.notes || "Nessuna");
+  
+  const cleanPhone = params.phone ? params.phone.replace(/\D/g, '') : "";
+  const whatsappLink = cleanPhone ? `\n\n💬 <a href="https://wa.me/39${cleanPhone}">Apri chat WhatsApp</a>` : "";
 
-  const message = `<b>🔔 Nuova Richiesta: ${type}</b>\n\n` +
+  const message = `<b>🔔 Nuova Richiesta: ${type}</b>\n\n` + 
                   `👤 <b>Cliente:</b> ${name}\n` +
                   `📞 <b>Tel:</b> ${phone}\n` +
                   `🛠 <b>Motivo:</b> ${reason}\n` +
                   `📅 <b>Data/Ora:</b> ${date}\n` +
-                  `📝 <b>Note:</b> ${notes}`;
+                  `📝 <b>Note:</b> ${notes}${whatsappLink}`;
 
   const payload = {
     chat_id: getTelegramChatId(),
@@ -354,12 +456,15 @@ function editTelegramMessage(chatId, messageId, newStatus, rowData, type) {
 
   if (!rowData || rowData.length < 7) return; // Evita errori se rowData è incompleto
 
+  const cleanPhone = rowData[3] ? String(rowData[3]).replace(/\D/g, '') : "";
+  const whatsappLink = cleanPhone ? `\n\n💬 <a href="https://wa.me/39${cleanPhone}">Apri chat WhatsApp</a>` : "";
+
   const text = `<b>🔔 Richiesta: ${type.toUpperCase()}</b>\n\n` +
                `👤 <b>Cliente:</b> ${escapeHTML(rowData[2])}\n` + 
                `📞 <b>Tel:</b> ${escapeHTML(rowData[3])}\n` +   
                `🛠 <b>Motivo:</b> ${escapeHTML(rowData[5])}\n` + 
                `📅 <b>Data:</b> ${escapeHTML(rowData[1])}\n` +
-               `📝 <b>Note:</b> ${escapeHTML(rowData[6])}\n\n` + 
+               `📝 <b>Note:</b> ${escapeHTML(rowData[6])}${whatsappLink}\n\n` + 
                `<b>Stato:</b> ${statusIcon} ${newStatus}`;
 
   try {
@@ -369,7 +474,9 @@ function editTelegramMessage(chatId, messageId, newStatus, rowData, type) {
         chat_id: chatId, message_id: messageId, text: text, parse_mode: "HTML", reply_markup: { inline_keyboard: [] }
       })
     });
-  } catch (e) {}
+  } catch (e) {
+    console.error("Errore modifica messaggio Telegram:", e.toString());
+  }
 }
 
 /**
@@ -381,7 +488,160 @@ function answerTelegramCallback(callbackQueryId, text) {
       method: "post", contentType: "application/json",
       payload: JSON.stringify({ callback_query_id: callbackQueryId, text: text, show_alert: false })
     });
-  } catch (e) {}
+  } catch (e) {
+    console.error("Errore risposta callback Telegram:", e.toString());
+  }
+}
+
+/**
+ * Gestisce l'invio delle email (Nuova richiesta e aggiornamento stato)
+ * Utilizza i template HTML se presenti nel progetto Google Apps Script.
+ */
+function sendEmailNotification(data, triggerType) {
+  // Recupero esplicito dell'email dalle proprietà o fallback
+  let adminEmail = PropertiesService.getScriptProperties().getProperty("ADMIN_EMAIL");
+  
+  try {
+    if (!adminEmail || adminEmail.trim() === "") {
+      adminEmail = Session.getEffectiveUser().getEmail();
+    }
+  } catch (e) {
+    adminEmail = "contatti.rosomarcello@gmail.com";
+  }
+
+  // Fallback finale se tutto il resto fallisce
+  if (!adminEmail || !adminEmail.includes("@")) {
+    adminEmail = "contatti.rosomarcello@gmail.com";
+  }
+  
+  console.log(`[Email Debug] Trigger: ${triggerType} | Admin Dest: ${adminEmail} | Cliente Dest: ${data.email}`);
+
+  // Arricchiamo l'oggetto data con link utili per i template HTML
+  if (data.phone && String(data.phone).trim() !== "") {
+    const cleanPhone = String(data.phone).replace(/^\+/, '').replace(/\D/g, '');
+    data.whatsappUrl = "https://wa.me/39" + cleanPhone;
+    data.telUrl = "tel:" + cleanPhone;
+  }
+
+  if (triggerType === "NEW_REQUEST") {
+    // 1. Email per il Laboratorio (Admin)
+    if (isValidEmail(adminEmail) && adminEmail.toLowerCase() !== "undefined") {
+      const adminTemplate = data.type === "preventivo" ? "preview_admin_preventivo" : "preview_admin_appuntamento";
+      sendTemplatedEmail(adminEmail, `Nuova richiesta ${data.type}: ${data.name}`, adminTemplate, data);
+    } else {
+      console.warn("Email amministratore non trovata. Notifica admin saltata.");
+    }
+
+    // 2. Email di conferma per il Cliente (Ricevuta)
+    const clientEmail = String(data.email || "").trim();
+    if (isValidEmail(clientEmail) && clientEmail.toLowerCase() !== "undefined") {
+      const clientTemplate = data.type === "preventivo" ? "preview_cliente_preventivo" : "preview_cliente_appuntamento";
+      sendTemplatedEmail(clientEmail, `Ricezione richiesta - Laboratorio Roso Marcello`, clientTemplate, data);
+    }
+
+  } else if (triggerType === "STATUS_UPDATE") {
+    // Email di esito per il Cliente
+    const clientEmail = String(data.email || "").trim();
+    if (!isValidEmail(clientEmail) || clientEmail.toLowerCase() === "undefined" || clientEmail === "") {
+      console.warn("[Email] Aggiornamento stato annullato: email cliente non valida.");
+      return;
+    }
+
+    const isAccepted = data.status === "ACCETTATO";
+    const statusTemplate = isAccepted ? "preview_cliente_conferma" : "preview_cliente_rifiuto";
+    sendTemplatedEmail(clientEmail, `Aggiornamento richiesta: ${data.status} - Laboratorio Roso Marcello`, statusTemplate, data);
+  }
+}
+
+/**
+ * Invia un'email utilizzando un template HTML se esiste, altrimenti fallback a testo semplice.
+ */
+function sendTemplatedEmail(to, subject, templateName, data) {
+  if (!to || to.trim() === "" || !to.includes("@")) {
+    console.error(`[Email] Destinatario non valido o mancante: "${to}". Invio annullato.`);
+    return;
+  }
+  
+  let htmlBody = "";
+  console.log(`[Email Debug] Generazione corpo per: ${to} usando template: ${templateName}`);
+  
+  try {
+    // 1. Prova a caricare il template HTML
+    const htmlTemplate = HtmlService.createTemplateFromFile(templateName);
+    htmlTemplate.data = data;
+    htmlBody = htmlTemplate.evaluate().getContent();
+  } catch (err) {
+    const statusMsg = data.status ? `Stato richiesta: ${data.status}\n\n` : "";
+    htmlBody = `Gentile ${data.name},<br><br>` +
+               `${statusMsg.replace(/\n/g, '<br>')}` +
+               `Dettagli della richiesta:<br>` +
+               `- Tipo: ${data.type}<br>` +
+               `- Motivo: ${data.reason}<br>` +
+               `- Data: ${data.date || "N/A"}<br>` +
+               `- Note: ${data.notes || "Nessuna"}<br><br>` +
+               `Cordiali saluti,<br>` +
+               `Laboratorio Odontotecnico Roso Marcello`;
+  }
+
+  try {
+    // Passiamo a Brevo per massima affidabilità e invio "No-Reply"
+    sendViaBrevo(to, subject, htmlBody);
+  } catch (e) {
+    console.error(`[Email Error] Fallimento invio a ${to}: ${e.message}`);
+  }
+}
+
+/**
+ * Invia l'email tramite le API di Brevo
+ * Molto più stabile per sistemi automatizzati
+ */
+function sendViaBrevo(to, subject, htmlContent) {
+  const apiKey = getSecretProperty("BREVO_API_KEY");
+  if (!apiKey) {
+    throw new Error("BREVO_API_KEY non configurata nelle proprietà dello script.");
+  }
+
+  // Recupera mittente e nome dalle proprietà per una gestione dinamica senza toccare il codice
+  const senderEmail = PropertiesService.getScriptProperties().getProperty("SENDER_EMAIL") || "contatti.rosomarcello@gmail.com";
+  const senderName = PropertiesService.getScriptProperties().getProperty("SENDER_NAME") || "Laboratorio Roso Marcello";
+
+  const payload = {
+    "sender": { "name": senderName, "email": senderEmail },
+    "to": [{ "email": to }],
+    "subject": subject,
+    "htmlContent": htmlContent
+  };
+
+  const options = {
+    "method": "post",
+    "contentType": "application/json",
+    "headers": { "api-key": apiKey },
+    "payload": JSON.stringify(payload),
+    "muteHttpExceptions": true
+  };
+
+  const response = UrlFetchApp.fetch("https://api.brevo.com/v3/smtp/email", options);
+
+  if (response.getResponseCode() !== 201 && response.getResponseCode() !== 200) {
+    throw new Error("Errore API Brevo: " + response.getContentText());
+  }
+  console.log(`[Brevo] Successo: Email inviata a ${to}`);
+}
+
+/**
+ * Registra una visita o un evento nel foglio 'visite'
+ */
+function recordVisit(eventType, details = "") {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheetByName(SHEET_NAMES.VISITS);
+    if (sheet) {
+      sheet.appendRow([new Date().toLocaleString('it-IT'), eventType, details]);
+      SpreadsheetApp.flush();
+    }
+  } catch (e) {
+    console.error("Errore registrazione visita: " + e.toString());
+  }
 }
 
 function getPublicWebhookUrl() {
@@ -408,7 +668,7 @@ function setTelegramWebhook(customUrl) {
     method: "post",
     payload: { url: url }
   });
-  Logger.log("Webhook impostato su: " + url);
+  Logger.log("📡 Telegram Webhook impostato correttamente su: " + url);
   Logger.log(response.getContentText());
 }
 
@@ -423,6 +683,7 @@ function getTelegramWebhookInfo() {
  * Gestisce le richieste GET (Admin Hub per visualizzare le richieste)
  */
 function doGet(e) {
+  recordVisit("Accesso Diretto URL", e.queryString || "Senza parametri");
   return ContentService.createTextOutput("Backend Laboratorio Roso Attivo").setMimeType(ContentService.MimeType.TEXT);
 }
 
@@ -432,8 +693,51 @@ function doGet(e) {
  * NOTA: Se usi Render, usa 'setWebhookRender' invece di 'setTelegramWebhook' standard.
  */
 function setWebhookRender() {
-  checkAndCreateSheets();
-  const renderUrl = "https://laboratorio-odontotecnico.onrender.com/api/telegram-webhook";
-  setTelegramWebhook(renderUrl);
-  Logger.log("🚀 Webhook forzato su Render: " + renderUrl);
+  try {
+    checkAndCreateSheets();
+    const renderUrl = "https://laboratorio-odontotecnico.onrender.com/api/telegram-webhook";
+    setTelegramWebhook(renderUrl); 
+    Logger.log("🚀 Webhook configurato per passare attraverso il Bridge di Render: " + renderUrl);
+  } catch (e) {
+    Logger.log("❌ Errore critico durante la configurazione del Webhook: " + e.message);
+    throw e;
+  }
+}
+
+/**
+ * Funzione di TEST per verificare l'invio delle email.
+ * Invia una simulazione di nuova richiesta sia all'admin che all'email specificata.
+ */
+function testInvioEmail() {
+  const miaEmail = Session.getEffectiveUser().getEmail();
+  const mockData = {
+    id: "TEST-UUID-12345",
+    name: "Mario Rossi (Test)",
+    email: miaEmail, // Inviamo a noi stessi anche come "cliente" per il test
+    phone: "3331234567",
+    reason: "Controllo Protesi Flessibile",
+    date: "Venerdì 24 Maggio alle ore 10:30",
+    notes: "Questa è una mail di test per verificare la grafica e l'invio doppio.",
+    type: "appuntamento"
+  };
+
+  Logger.log("Avvio test invio email...");
+  sendEmailNotification(mockData, "NEW_REQUEST");
+  
+  Logger.log("Avvio test notifica Telegram...");
+  try {
+    const telRes = sendTelegramNotification({
+      name: mockData.name,
+      request_type: mockData.type,
+      phone: mockData.phone,
+      reason: mockData.reason,
+      date: mockData.date,
+      notes: mockData.notes
+    }, "TEST-ID-123");
+    Logger.log(telRes ? "Notifica Telegram inviata!" : "Notifica Telegram fallita (controlla i log).");
+  } catch (e) {
+    Logger.log("Errore durante il test Telegram: " + e.message);
+  }
+
+  Logger.log("Test completato. Controlla Gmail e Telegram.");
 }

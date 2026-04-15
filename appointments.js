@@ -155,13 +155,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Sanificazione input prima dell'invio
-            const formData = new FormData(appointmentForm);
+            // Validazione rigorosa della data e dell'ora per gli appuntamenti
+            const selectedRequestType = document.querySelector('input[name="request_type"]:checked').value;
+            if (selectedRequestType === 'appuntamento') {
+                const dateValue = datePicker.value.trim();
+                // Verifichiamo che non sia vuoto e che contenga la stringa "alle ore" impostata da generateTimeSlots
+                if (!dateValue || !dateValue.includes("alle ore")) {
+                    alert("Per favore, seleziona una data dal calendario E una fascia oraria tra quelle disponibili.");
+                    return;
+                }
+            }
+
+            // Costruzione esplicita dei dati per garantire che 'date' sia incluso correttamente
             const cleanData = new URLSearchParams();
+            const formData = new FormData(appointmentForm);
             
             for (let [key, value] of formData.entries()) {
-                // Se è una stringa, la sanifichiamo
-                const sanitizedValue = typeof value === 'string' ? sanitizeString(value) : value;
+                let sanitizedValue = typeof value === 'string' ? sanitizeString(value) : value;
+                
                 cleanData.append(key, sanitizedValue);
             }
 

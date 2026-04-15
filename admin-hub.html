@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" id="admin-hub-page">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,6 +20,16 @@
         .btn-accept { background: #10b981; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; }
         .btn-reject { background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; }
         .loader { text-align: center; padding: 50px; }
+        
+        .tabs-nav { display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
+        .tab-btn { background: #f1f5f9; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; color: var(--muted); transition: all 0.3s; }
+        .tab-btn.active { background: var(--primary-blue); color: white; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .stats-bar { background: white; padding: 15px; border-radius: 12px; margin-bottom: 20px; display: flex; gap: 30px; box-shadow: var(--shadow); border: 1px solid #e2e8f0; display: none; }
+        .stat-item { font-weight: 600; font-size: 0.9rem; color: var(--text-main); }
+        .stat-item i { color: var(--primary-blue); margin-right: 5px; }
         
         /* Stili per l'accesso */
         #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--dark-blue); z-index: 10000; display: flex; align-items: center; justify-content: center; color: white; flex-direction: column; gap: 20px; }
@@ -49,20 +59,38 @@
     </header>
 
     <main class="admin-container">
+        <div id="stats-bar" class="stats-bar">
+            <div class="stat-item"><i class="fas fa-eye"></i> Visite Totali: <span id="stat-visits">0</span></div>
+            <div class="stat-item"><i class="fas fa-file-alt"></i> Richieste Ricevute: <span id="stat-requests">0</span></div>
+        </div>
+
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-            <h2 style="text-align: left; margin: 0;">Richieste Pendenti</h2>
+            <h2 style="text-align: left; margin: 0;">Pannello di Controllo</h2>
             <button onclick="loadRequests()" class="btn" style="padding: 8px 15px; font-size: 0.8rem;"><i class="fas fa-sync"></i> Aggiorna</button>
         </div>
 
-        <div id="requests-list">
+        <div class="tabs-nav">
+            <button onclick="switchTab('appointments')" id="btn-appointments" class="tab-btn active">Appuntamenti</button>
+            <button onclick="switchTab('quotes')" id="btn-quotes" class="tab-btn">Preventivi</button>
+            <button onclick="switchTab('history')" id="btn-history" class="tab-btn">Storico</button>
+        </div>
+
+        <div id="appointments-list" class="tab-content active">
             <div class="loader"><div class="medical-loader"></div><p>Caricamento dati dal server...</p></div>
         </div>
+        <div id="quotes-list" class="tab-content"></div>
+        <div id="history-list" class="tab-content"></div>
     </main>
 
     <script>
         const scriptURL = 'https://laboratorio-odontotecnico.onrender.com/api/prenotazioni';
         const loginOverlay = document.getElementById('login-overlay');
-        const requestsList = document.getElementById('requests-list');
+        
+        // Definizioni globali delle liste per i Tab
+        const appointmentsList = document.getElementById('appointments-list');
+        const quotesList = document.getElementById('quotes-list');
+        const historyList = document.getElementById('history-list');
+        
         const adminPassInput = document.getElementById('admin-pass');
         let adminToken = '';
 
@@ -91,6 +119,14 @@
             return response.json();
         }
 
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(`${tabId}-list`).classList.add('active');
+            document.getElementById(`btn-${tabId}`).classList.add('active');
+        }
+
         async function checkAccess() {
             const token = adminPassInput.value.trim();
             if (!token) {
@@ -100,12 +136,13 @@
 
             try {
                 const data = await sendAdminRequest({ action: 'getRequests', admin_token: token });
-                if (!Array.isArray(data)) {
+                if (data.status === 'error' || !data.requests) {
                     throw new Error('Token non valido');
                 }
 
                 adminToken = token;
                 loginOverlay.style.display = 'none';
+                document.getElementById('stats-bar').style.display = 'flex';
                 renderRequests(data);
             } catch (e) {
                 alert('Token non valido o backend non disponibile.');
@@ -117,20 +154,25 @@
                 const data = await sendAdminRequest({ action: 'getRequests' });
                 renderRequests(data);
             } catch (e) {
-                requestsList.innerHTML = '<p>Errore nel caricamento. Verifica il token e il backend.</p>';
+                appointmentsList.innerHTML = '<p>Errore nel caricamento.</p>';
             }
         }
 
         function renderRequests(data) {
-            requestsList.innerHTML = '';
-            if (!Array.isArray(data) || data.length === 0) {
-                requestsList.innerHTML = '<p>Nessuna richiesta da gestire.</p>';
-                return;
-            }
+            appointmentsList.innerHTML = '';
+            quotesList.innerHTML = '';
+            historyList.innerHTML = '';
+            
+            const requests = data.requests || [];
+            const stats = data.stats || { visits: 0 };
 
-            data.forEach(req => {
+            document.getElementById('stat-visits').textContent = stats.visits;
+            document.getElementById('stat-requests').textContent = requests.length;
+            
+            requests.forEach(req => {
                 const status = req.status || 'PENDENTE';
                 const isPending = status === 'PENDENTE';
+                const type = req.type || 'appuntamento';
                 const statusClass = `status-${status.toLowerCase()}`;
 
                 const card = createElement('div', `request-card${!isPending ? ' handled' : ''}`);
@@ -164,9 +206,19 @@
                     actions.appendChild(rejectButton);
                     card.appendChild(actions);
                 }
-
-                requestsList.appendChild(card);
+                
+                if (!isPending) {
+                    historyList.appendChild(card);
+                } else if (type === 'appuntamento') {
+                    appointmentsList.appendChild(card);
+                } else {
+                    quotesList.appendChild(card);
+                }
             });
+
+            if (appointmentsList.children.length === 0) appointmentsList.innerHTML = '<p>Nessun appuntamento pendente.</p>';
+            if (quotesList.children.length === 0) quotesList.innerHTML = '<p>Nessun preventivo pendente.</p>';
+            if (historyList.children.length === 0) historyList.innerHTML = '<p>Lo storico è vuoto.</p>';
         }
 
         async function handleAction(requestId, action) {

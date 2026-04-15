@@ -1,43 +1,35 @@
 <!DOCTYPE html>
-<html lang="it">
-<head><meta charset="UTF-8"><title>Anteprima Cliente - Appuntamento Rifiutato</title></head>
-<body style="font-family: 'Poppins', Arial, sans-serif; line-height: 1.6; color: #2c3e50; background-color: #f8f9fa; margin: 0; padding: 20px;">
-    <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.08);">
-        <div style="background: linear-gradient(135deg, #dc3545, #c82333); padding: 20px; text-align: center;">
-            <img src="https://raw.githubusercontent.com/contattirosomarcello-blip/laboratorio-odontotecnico/main/foto/logo%20marcello.jpeg" alt="Laboratorio Roso Marcello" style="max-width: 120px; border-radius: 50%; border: 3px solid white;">
-        </div>
-        <div style="padding: 30px;">
-            <h2 style="color: #c82333; text-align: center; margin-top: 0;">Spiacenti, appuntamento non disponibile</h2>
-            <p>Gentile {{ nome }},</p>
-            <p>Ci dispiace informarti che l'appuntamento richiesto non è disponibile nella data e ora selezionate.</p>
-
-            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #dc3545;">
-                <h3 style="margin-top: 0; color: #c82333;">Dettagli della richiesta:</h3>
-                <p><strong>📅 Data richiesta:</strong> {{ data_appuntamento }}</p>
-                <p><strong>🕒 Ora richiesta:</strong> {{ ora_appuntamento }}</p>
-                <p><strong>❓ Motivo:</strong> {{ motivo_rifiuto }}</p>
-            </div>
-
-            <div style="text-align: center; margin: 25px 0; color: #555; font-size: 0.95em;">
-                <p>📞 <strong>Contattaci per alternative</strong><br>
-                Ti invitiamo a chiamarci al <strong>338 1731927</strong> per trovare una soluzione alternativa o riprenotare in una data disponibile.</p>
-            </div>
-
-            <p style="text-align: center; margin-top: 30px;">
-                <a href="https://contattirosomarcello.it/" style="background: linear-gradient(135deg, #dc3545, #c82333); color: #ffffff; padding: 12px 25px; border-radius: 50px; text-decoration: none; display: inline-block;">Visita il nostro sito</a>
-            </p>
-        </div>
-        <div style="background-color: #063969; color: #ffffff; padding: 20px; text-align: center; font-size: 0.9em;">
-            <p style="margin: 0 0 10px 0;">
-                <strong>Laboratorio Odontotecnico Roso Marcello</strong><br>
-                Corso Regio Parco, 168 - 10154 Torino (TO)<br>
-                Tel: 338 1731927 | WhatsApp: <a href="https://wa.me/393381731927" style="color: white;">+39 338 1731927</a>
-            </p>
-            <p style="margin: 0;">
-                <a href="https://www.facebook.com" style="color: white; margin: 0 5px;">Facebook</a> |
-                <a href="https://www.instagram.com" style="color: white; margin: 0 5px;">Instagram</a>
-            </p>
-        </div>
+<html>
+<head>
+  <base target="_top">
+  <style>
+    .email-body { font-family: 'Poppins', 'Segoe UI', sans-serif; line-height: 1.6; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; }
+    .header { background-color: #ef4444; color: #ffffff; padding: 30px; text-align: center; }
+    .logo-img { width: 80px; height: 80px; border-radius: 50%; border: 3px solid #ffffff; margin-bottom: 10px; }
+    .content { padding: 30px; background-color: #ffffff; }
+    .footer { background-color: #f8fafc; color: #64748b; padding: 20px; text-align: center; font-size: 12px; }
+    .status-badge { display: inline-block; padding: 6px 12px; background-color: #fee2e2; color: #991b1b; border-radius: 20px; font-weight: bold; font-size: 14px; margin-bottom: 20px; }
+    .btn-call { display: inline-block; padding: 12px 25px; background-color: #1e293b; color: #ffffff !important; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <div class="email-body">
+    <div class="header">
+      <img src="https://raw.githubusercontent.com/contattirosomarcello-blip/laboratorio-odontotecnico/main/foto/logo%20marcello.jpeg" class="logo-img">
+      <h1 style="margin:0; font-size: 20px;">Laboratorio Roso Marcello</h1>
     </div>
+    <div class="content" style="text-align: center;">
+      <div class="status-badge">✕ NON DISPONIBILE</div>
+      <p>Gentile <strong><?= data.name ?></strong>,</p>
+      <p>Spiacenti, ma non è stato possibile confermare l'appuntamento per la data richiesta (<?= data.date ?>).</p>
+      
+      <p style="margin-top: 25px; font-size: 14px;">Ti invitiamo a contattarci telefonicamente per concordare un orario alternativo.</p>
+      
+      <a href="tel:3381731927" class="btn-call">Chiama ora</a>
+    </div>
+    <div class="footer">
+      Laboratorio Odontotecnico Roso Marcello | Torino
+    </div>
+  </div>
 </body>
 </html>

@@ -3,6 +3,17 @@
  * Ingegneria Frontend Professionale
  */
 document.addEventListener('DOMContentLoaded', () => {
+    // Tracking delle visite reali al caricamento della pagina
+    const trackVisit = () => {
+        const bridgeURL = 'https://laboratorio-odontotecnico.onrender.com/api/prenotazioni';
+        const pageName = document.title || 'Sito Web';
+        fetch(bridgeURL, {
+            method: 'POST',
+            body: new URLSearchParams({ action: 'trackPageVisit', details: `Visualizzazione: ${pageName}` })
+        }).catch(() => {}); // Fallimento silenzioso per non disturbare l'utente
+    };
+    trackVisit();
+
     // 0. Automazione Preloader
     const preloader = document.getElementById('preloader');
     if (preloader) {
